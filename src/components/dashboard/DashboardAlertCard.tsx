@@ -1,5 +1,5 @@
-import { Card,CardHeader,CardDescription,CardTitle,CardContent,CardFooter } from "./ui/card"
-import { Progress } from "./ui/progress"
+import { Card,CardHeader,CardDescription,CardTitle,CardContent,CardFooter } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
 
 
 export function DashboardAlertCard(){
