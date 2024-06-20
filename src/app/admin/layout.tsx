@@ -1,7 +1,8 @@
 import { Navbar } from "@/components/Navbar";
 import TopBar from "@/components/Topbar";
 import type { Metadata } from "next";
-
+import { Toaster } from "@/components/ui/toaster"
+import { Providers } from "../providers";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,10 +19,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <TopBar/>
     
       
-    {children}
+    <Providers>{children}</Providers>
     
     </div>
     </div> 
+    <Toaster/>
     </body>
     </html>
   );

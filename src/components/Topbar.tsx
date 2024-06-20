@@ -1,6 +1,8 @@
+"use client"
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { signIn, signOut } from 'next-auth/react'
 import {
   Home,
   LineChart,
@@ -124,7 +126,7 @@ export function TopBar(){
                 className="overflow-hidden rounded-full"
               >
                 <Image
-                  src="/placeholder-user.jpg"
+                  src="/profile.png"
                   width={36}
                   height={36}
                   alt="Avatar"
@@ -138,7 +140,7 @@ export function TopBar(){
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 </header>

@@ -49,7 +49,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import CurrentStaffTable from '@/components/staff/CurrentStaffTable'
-import { DialogDemo } from '@/components/AddStaff'
+import { AddStaffDialog } from '@/components/staff/AddStaffDialog'
 
 
 
@@ -92,7 +92,7 @@ const page = () => {
                     Export
                   </span>
                 </Button>
-                <DialogDemo/>
+                <AddStaffDialog/>
               </div>
             </div>
             <TabsContent value="all">

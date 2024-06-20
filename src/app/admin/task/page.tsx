@@ -48,8 +48,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import CurrentStaffTable from '@/components/task/CurrentStaffTable'
-import { DialogDemo } from '@/components/AddStaff'
+import  TaskListAll from '@/components/task/tasklist'
+import TaskListPending from '@/components/task/tasklistpending'
+import TaskStaff from '@/components/task/taskstaff'
+import MyTask from '@/components/task/mytask'
 
 
 
@@ -60,17 +62,23 @@ const page = () => {
             <div className="flex items-center">
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Pending</TabsTrigger>
-                <TabsTrigger value="draft">Assigned</TabsTrigger>
-                 
+                <TabsTrigger value="pending">Pending</TabsTrigger>
+                <TabsTrigger value="staff">Staff</TabsTrigger>
+                <TabsTrigger value="mytask">My Task</TabsTrigger>
               </TabsList>
             
             </div>
             <TabsContent value="all">
-              <CurrentStaffTable/>
+              <TaskListAll/>
             </TabsContent>
-            <TabsContent value="active">
-            
+            <TabsContent value="pending">
+            <TaskListPending/>
+            </TabsContent>
+            <TabsContent value="staff">
+            <TaskStaff/>
+            </TabsContent>
+            <TabsContent value="mytask">
+            <MyTask/>
             </TabsContent>
           </Tabs>
     </main>

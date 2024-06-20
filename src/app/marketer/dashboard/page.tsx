@@ -1,9 +1,9 @@
-import { Dashboard } from '@/components/a'
+
 import React from 'react'
 
 const page = () => {
   return (
-    <Dashboard/>
+    <></>
   )
 }
 
