@@ -158,3 +158,40 @@ export async function getBookingTaskDataPending() {
       }));
 
   }
+
+  export async function getBookingList() {
+    const result = await db.bookings.findMany({
+      include:{
+        packages:true,
+      }
+     
+    });
+
+    
+  
+    return result.map((booking) => ({
+
+      
+      
+
+        booking_id: booking.booking_id,
+        groomname: booking.groom_name,
+        bridename: booking.bride_name,
+        bookingdate: booking.created_at?.toLocaleDateString(),
+        eventdate: booking.event_date?.toLocaleDateString(),
+        eventaddress:booking.event_address,
+        contact: booking.contact_no,
+        packagetype:booking.packages?.package_type,
+        packagename:booking.packages?.package_name,
+
+
+    }));
+  };
+
+  export async function getAllPackage() {
+    const result = await db.packages.findMany({
+      
+    });
+
+    return result
+  };

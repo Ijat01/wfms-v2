@@ -93,11 +93,6 @@ export function AddStaffDialog() {
             {errors.fullname && <p>{errors.fullname.message}</p>}
           </div>
           <div className="pt-4">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" {...register("email")} />
-            {errors.email && <p>{errors.email.message}</p>}
-          </div>
-          <div className="pt-4">
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" {...register("password")} />
             {errors.password && <p>{errors.password.message}</p>}

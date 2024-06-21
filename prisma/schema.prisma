@@ -8,7 +8,7 @@ datasource db {
 }
 
 model bookings {
-  booking_id    Int        @id
+  booking_id    Int        @id @default(autoincrement())
   user_id       String?    @db.VarChar(14)
   package_id    String?    @db.VarChar(255)
   groom_name    String?    @db.VarChar(255)
@@ -29,7 +29,7 @@ model bookings {
 }
 
 model package_packageitems {
-  pack_id         Int           @id
+  pack_id         Int           @id @default(autoincrement())
   package_id      String?       @db.VarChar(11)
   packageitems_id Int?
   packageitems    packageitems? @relation(fields: [packageitems_id], references: [packageitem_id], onDelete: Restrict, onUpdate: Restrict, map: "PACKAGEITEM_FK")
@@ -41,7 +41,7 @@ model package_packageitems {
 }
 
 model packageitems {
-  packageitem_id          Int                    @id
+  packageitem_id          Int                    @id @default(autoincrement())
   packageitem_name        String?                @db.VarChar(255)
   packageitem_description String?                @db.VarChar(255)
   created_at              DateTime?              @default(now()) @db.Date
@@ -61,7 +61,7 @@ model packages {
 }
 
 model payments {
-  payment_id          Int       @id
+  payment_id          Int       @id @default(autoincrement())
   booking_id          Int?
   payment_status      String?   @db.VarChar(255)
   payment_type        String?   @db.VarChar(255)
@@ -77,7 +77,7 @@ model payments {
 }
 
 model taskassignments {
-  taskassignment_id          Int       @id
+  taskassignment_id          Int       @id @default(autoincrement())
   task_id                    Int?
   user_id                    String?   @db.VarChar(14)
   taskassignment_role        String?   @db.VarChar(255)
@@ -93,7 +93,7 @@ model taskassignments {
 }
 
 model tasks {
-  task_id         Int               @id
+  task_id         Int               @id @default(autoincrement())
   booking_id      Int?
   task_status     String?           @db.VarChar(255)
   task_type       String?           @db.VarChar(255)
