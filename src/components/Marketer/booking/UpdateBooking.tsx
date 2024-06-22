@@ -29,15 +29,15 @@ import {
 
 // Define the schema for updating a booking
 const UpdateBookingSchema = z.object({
-  booking_id: z.number(),
-  groomname: z.string().nullable(),
-  bridename: z.string().nullable(),
+  booking_id: z.string(),
+  groomname: z.string(),
+  bridename: z.string(),
   bookingdate: z.string().optional(),
-  eventdate: z.string().optional(),
-  eventaddress: z.string().nullable(),
-  contact: z.string().nullable(),
-  package_id: z.string().nullable(),
-  package_name: z.string().nullable(),
+  eventdate: z.string(),
+  eventaddress: z.string(),
+  contact: z.string(),
+  package_id: z.string().optional(),
+  packagename: z.string().optional(),
 });
 
 // Define the TypeScript type from the schema
@@ -49,15 +49,16 @@ interface Package {
   }
 // Define Booking interface
 interface Booking {
-    booking_id: number;
-    groomname: string | null;
-    bridename: string | null;
-    bookingdate: string | undefined;
-    eventdate: string | undefined;
-    eventaddress: string | null;
-    contact: string | null;
-    packagetype: string | null | undefined;
-    packagename: string | null | undefined;
+    booking_id: string;
+    groomname: string ;
+    bridename: string ;
+    bookingdate: string ;
+    eventdate: string ;
+    eventaddress: string;
+    contact: string ;
+    packagetype: string | undefined;
+    packagename: string | undefined;
+    packageid: string | undefined;
 }
 
 interface UpdateBookingDialogProps {
@@ -66,6 +67,7 @@ interface UpdateBookingDialogProps {
 
 export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -76,17 +78,27 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
     resolver: zodResolver(UpdateBookingSchema),
   });
 
+  const {
+    data: packages,
+    error: packagesError,
+    isLoading: packagesLoading,
+  } = useQuery({
+    queryKey: ["packages"],
+    queryFn: async () => {
+      const response = await axios.get("/api/package");
+      return response.data;
+    },
+  });
+
   useEffect(() => {
     if (booking) {
       setValue("booking_id", booking.booking_id);
       setValue("groomname", booking.groomname);
       setValue("bridename", booking.bridename);
-      setValue("bookingdate", booking.bookingdate);
       setValue("eventdate", booking.eventdate);
       setValue("eventaddress", booking.eventaddress);
       setValue("contact", booking.contact);
-      setValue("package_id", booking.package_id);
-      setValue("package_name", booking.package_name);
+      setValue("packagename", booking.packagename);
     }
   }, [booking, setValue]);
 
@@ -124,17 +136,7 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
     return null; // Render nothing if booking is not provided
   }
 
-  const {
-    data: packages,
-    error: packagesError,
-    isLoading: packagesLoading,
-  } = useQuery({
-    queryKey: ["packages"],
-    queryFn: async () => {
-      const response = await axios.get("/api/package");
-      return response.data;
-    },
-  });
+
 
   return (
     <Dialog>
@@ -151,8 +153,8 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="pt-4">
             <Label htmlFor="booking_id">Booking ID</Label>
-            <Input id="booking_id" {...register("booking_id")} readOnly />
-            {errors.booking_id && <p>{errors.booking_id.message as string}</p>}
+            <Input type="number" id="booking_id" {...register("booking_id")} readOnly />
+            {errors.booking_id && <p>{errors.booking_id.message}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="groomname">Groom Name</Label>
@@ -165,24 +167,9 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
             {errors.bridename && <p>{errors.bridename.message as string}</p>}
           </div>
           <div className="pt-4">
-            <Label htmlFor="bookingdate">Booking Date</Label>
-            <Input id="bookingdate" type="date" {...register("bookingdate")} />
-            {errors.bookingdate && <p>{errors.bookingdate.message as string}</p>}
-          </div>
-          <div className="pt-4">
             <Label htmlFor="eventdate">Event Date</Label>
             <Input id="eventdate" type="date" {...register("eventdate")} />
             {errors.eventdate && <p>{errors.eventdate.message as string}</p>}
-          </div>
-          <div className="pt-4">
-            <Label htmlFor="eventaddress">Event Address</Label>
-            <Input id="eventaddress" {...register("eventaddress")} />
-            {errors.eventaddress && <p>{errors.eventaddress.message as string}</p>}
-          </div>
-          <div className="pt-4">
-            <Label htmlFor="contact">Contact</Label>
-            <Input id="contact" {...register("contact")} />
-            {errors.contact && <p>{errors.contact.message as string}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="packageid">Package</Label>
@@ -192,13 +179,13 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
               <p>Failed to load packages</p>
             ) : (
               <Select
-                id="packageid"
+                
                 {...register("package_id")}
-                defaultValue="1"
+                defaultValue={booking.packagename}
                 onValueChange={(value) => setValue("package_id", value)}
               >
-                <SelectTrigger id="packageid" aria-label="Select package">
-                  <SelectValue placeholder="Select package" />
+                <SelectTrigger id="package_id" aria-label="Select package">
+                  <SelectValue id="packagename" placeholder="Select package" />
                 </SelectTrigger>
                 <SelectContent>
                   {packages.map((pkg: Package) => (
@@ -209,6 +196,16 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
                 </SelectContent>
               </Select>
             )}
+          </div>
+          <div className="pt-4">
+            <Label htmlFor="eventaddress">Event Address</Label>
+            <Input id="eventaddress" {...register("eventaddress")} />
+            {errors.eventaddress && <p>{errors.eventaddress.message as string}</p>}
+          </div>
+          <div className="pt-4">
+            <Label htmlFor="contact">Contact</Label>
+            <Input id="contact" {...register("contact")} />
+            {errors.contact && <p>{errors.contact.message as string}</p>}
           </div>
           <DialogFooter className="pt-4">
             <Button type="submit">

@@ -102,7 +102,7 @@ export async function BookingList(){
                         </TableCell>
                         <TableCell >
                         <div className="flex gap-4 justify-end mr-5">
-                        <UpdateBookingDialog data ={booking}/>
+                        <UpdateBookingDialog booking ={booking}/>
                         <DeleteBookingDialog booking={booking} />
                         </div>
                         </TableCell>

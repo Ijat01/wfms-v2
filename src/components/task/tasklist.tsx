@@ -56,7 +56,7 @@ async function TaskList(){
                         Date: 
                     </div>
                     <div className="text-xs text-muted-foreground pt-2">
-                        Package: {task.event_type}
+                        
                     </div>
                     
                     </CardContent>

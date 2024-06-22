@@ -5,7 +5,7 @@ import { getAuthSession } from '@/lib/auth';
 
 // Define a schema for validating the request body
 const DeleteBookingSchema = z.object({
-  booking_id: z.number(),
+  booking_id: z.string(),
 });
 
 export async function DELETE(req: Request) {
@@ -13,6 +13,7 @@ export async function DELETE(req: Request) {
     const body = await req.json();
     const { booking_id } = DeleteBookingSchema.parse(body);
 
+    
     // Ensure the user is authenticated
     const session = await getAuthSession();
     if (!session) {
@@ -22,8 +23,10 @@ export async function DELETE(req: Request) {
     console.log('Session ID:', session.user.id);
 
     // Delete the user record from the database
+    const newbookingid = +booking_id;
+
     const deletedBooking = await db.bookings.delete({
-      where: { booking_id },
+      where: { booking_id : newbookingid }  ,
     });
 
     console.log('Booking successfully deleted:', deletedBooking);

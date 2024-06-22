@@ -73,7 +73,7 @@ async function TaskStaff(){
                           Event type: 
                       </div>
                       <div className="text-xs text-muted-foreground pl-1 pt-2">
-                          {task.event_type}
+                          
                       </div>
                       
                     </div>

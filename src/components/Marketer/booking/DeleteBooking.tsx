@@ -19,15 +19,15 @@ import { Button } from '@/components/ui/button';
 
 interface DeleteBookingDialogProps {
   booking: {
-    booking_id: number;
-    groomname: string | null;
-    bridename: string | null;
-    bookingdate: string | undefined;
-    eventdate: string | undefined;
-    eventaddress: string | null;
-    contact: string | null;
-    packagetype: string | null | undefined;
-    packagename: string | null | undefined;
+    booking_id: string;
+    groomname: string ;
+    bridename: string ;
+    bookingdate: string ;
+    eventdate: string ;
+    eventaddress: string;
+    contact: string ;
+    packagetype: string | undefined;
+    packagename: string | undefined ;
   };
 }
 
@@ -39,7 +39,7 @@ export function DeleteBookingDialog({ booking }: DeleteBookingDialogProps) {
   const closeDialog = () => setIsOpen(false);
 
   const mutation = useMutation({
-    mutationFn: async (booking_id: number) => {
+    mutationFn: async (booking_id: string) => {
       const endpoint = `/api/booking/deletebooking/`;
       const { data } = await axios.delete(endpoint, { data: { booking_id }});
       return data;
@@ -47,14 +47,14 @@ export function DeleteBookingDialog({ booking }: DeleteBookingDialogProps) {
     onError: (err) => {
       toast({
         title: "Something went wrong.",
-        description: "Staff deletion failed. Please try again.",
+        description: "Booking deletion failed. Please try again.",
         variant: "destructive",
       });
     },
     onSuccess: () => {
       toast({
         title: "Success!",
-        description: "Staff deleted successfully.",
+        description: "Booking deleted successfully.",
         variant: "success",
       });
       router.refresh();

@@ -4,17 +4,19 @@ import { getAuthSession } from '@/lib/auth';
 import { z } from 'zod';
 
 // Define the schema for updating a booking
+
 const UpdateBookingSchema = z.object({
-  booking_id: z.number(),
-  groomname: z.string().nullable(),
-  bridename: z.string().nullable(),
-  bookingdate: z.string().optional(),
-  eventdate: z.string().optional(),
-  eventaddress: z.string().nullable(),
-  contact: z.string().nullable(),
-  packagetype: z.string().nullable(),
-  packageid: z.string().nullable(),
-});
+    booking_id: z.string(),
+    groomname: z.string(),
+    bridename: z.string(),
+    bookingdate: z.string().optional(),
+    eventdate: z.string(),
+    eventaddress: z.string(),
+    contact: z.string(),
+    package_id: z.string().optional(),
+    package_name: z.string().optional(),
+  });
+
 
 export async function PATCH(req: Request) {
   try {
@@ -27,8 +29,7 @@ export async function PATCH(req: Request) {
       eventdate,
       eventaddress,
       contact,
-      packagetype,
-      packageid,
+      package_id,
     } = UpdateBookingSchema.parse(body);
 
     // Ensure the user is authenticated
@@ -39,18 +40,19 @@ export async function PATCH(req: Request) {
 
     console.log('Session ID:', session.user.id);
 
+    const neweventdate = new Date(eventdate).toISOString();
+    const newbookingid = +booking_id;
     // Update the booking record in the database
     const updatedBooking = await db.bookings.update({
-      where: { booking_id: booking_id },
+      where: { booking_id: newbookingid },
       data: {
         groom_name: groomname,
         bride_name: bridename,
         updated_at: bookingdate,
-        event_date: eventdate,
+        event_date: neweventdate,
         event_address: eventaddress,
         contact_no: contact,
-        event_type: "",
-        package_id: packageid,
+        package_id: package_id,
       },
     });
 

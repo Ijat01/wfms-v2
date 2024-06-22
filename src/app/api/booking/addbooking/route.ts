@@ -39,8 +39,7 @@ export async function POST(req: Request) {
         package_id: packageid,
         groom_name: groomname.toUpperCase(),
         bride_name: bridename.toUpperCase(),
-        event_date: formattedDate,
-        event_type: "", // Adjust as needed
+        event_date: formattedDate, // Adjust as needed
         event_address: eventaddress,
         contact_no: contactno,
         created_at: new Date(),

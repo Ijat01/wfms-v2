@@ -155,7 +155,7 @@ export function AddBookingDialog() {
               <p>Failed to load packages</p>
             ) : (
               <Select
-                id="packageid"
+                
                 {...register("packageid")}
                 defaultValue="1"
                 onValueChange={(value) => setValue("packageid", value)}

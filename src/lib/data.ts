@@ -14,7 +14,6 @@ export async function getBookingTaskDataAll() {
           event_address: true,
           bride_name: true,
           groom_name: true,
-          event_type: true
         },
       },
     },
@@ -28,7 +27,6 @@ export async function getBookingTaskDataAll() {
     event_address: task.bookings?.event_address, 
     bride_name: task.bookings?.bride_name, 
     groom_name: task.bookings?.groom_name, 
-    event_type: task.bookings?.event_type,
     task_type: task.task_type,    
   }));
 };
@@ -46,7 +44,6 @@ export async function getBookingTaskDataPending() {
             event_address: true,
             bride_name: true,
             groom_name: true,
-            event_type: true
           },
         },
       },
@@ -60,7 +57,6 @@ export async function getBookingTaskDataPending() {
       event_address: task.bookings?.event_address, 
       bride_name: task.bookings?.bride_name, 
       groom_name: task.bookings?.groom_name, 
-      event_type: task.bookings?.event_type,
       task_type: task.task_type,  
     }));
   };
@@ -83,7 +79,6 @@ export async function getBookingTaskDataPending() {
                 select: {
                   event_date: true,
                   event_address: true,
-                  event_type:true,
                   bride_name: true,
                   groom_name: true,
                 },
@@ -102,7 +97,6 @@ export async function getBookingTaskDataPending() {
         event_address: task.tasks?.bookings?.event_address, 
         bride_name: task.tasks?.bookings?.bride_name, 
         groom_name: task.tasks?.bookings?.groom_name, 
-        event_type: task.tasks?.bookings?.event_type,  
       }));
 
   }
@@ -134,7 +128,6 @@ export async function getBookingTaskDataPending() {
                 select: {
                   event_date: true,
                   event_address: true,
-                  event_type:true,
                   bride_name: true,
                   groom_name: true,
                 },
@@ -153,8 +146,7 @@ export async function getBookingTaskDataPending() {
         event_date: task.tasks?.bookings?.event_date, 
         event_address: task.tasks?.bookings?.event_address, 
         bride_name: task.tasks?.bookings?.bride_name, 
-        groom_name: task.tasks?.bookings?.groom_name, 
-        event_type: task.tasks?.bookings?.event_type,  
+        groom_name: task.tasks?.bookings?.groom_name,  
       }));
 
   }
@@ -174,7 +166,7 @@ export async function getBookingTaskDataPending() {
       
       
 
-        booking_id: booking.booking_id,
+        booking_id: booking.booking_id.toLocaleString(),
         groomname: booking.groom_name,
         bridename: booking.bride_name,
         bookingdate: booking.created_at?.toLocaleDateString(),
@@ -183,6 +175,7 @@ export async function getBookingTaskDataPending() {
         contact: booking.contact_no,
         packagetype:booking.packages?.package_type,
         packagename:booking.packages?.package_name,
+        packageid:booking.packages?.package_id
 
 
     }));

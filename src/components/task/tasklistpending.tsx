@@ -47,7 +47,7 @@ async function TaskListPending(){
                           Date: 
                       </div>
                       <div className="text-xs text-muted-foreground pt-2">
-                          Package: {task.event_type}
+                          
                       </div>
                       </CardContent>
                       <CardFooter className="flex justify-end gap-5">
