@@ -38,37 +38,13 @@ import { db } from "@/lib/db"
 import { UpdateStaffDialog } from "@/components/staff/UpdateStaffDialog"
 import { DeleteStaffDialog } from "./DeleteStaffDialog"
 import { useRouter } from "next/navigation"
+import { getAllUser } from "@/lib/data"
 
 
 export async function CurrentStaffTable(){
 
 
-  const data = await db.users.findMany({
-      select:{
-          user_email:true,
-          user_id:true,
-          user_role:true,
-          user_fullname:true,
-      }
-  })
-
-  const handleDelete = async (userId: string) => {
-    try{
-
-      await db.users.delete({
-        where: {
-          user_id: userId,
-        },
-      
-    })
-    
-    }catch (error){
-
-
-    }
-  
-  
-  };
+  const data = await getAllUser();
 
   return (
     <>

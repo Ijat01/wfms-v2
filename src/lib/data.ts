@@ -188,3 +188,25 @@ export async function getBookingTaskDataPending() {
 
     return result
   };
+
+  export async function getAllUser(){
+
+    const result = await db.users.findMany({
+      select:{
+          user_email:true,
+          user_id:true,
+          user_role:true,
+          user_fullname:true,
+      } 
+  })
+
+  return result.map((users) => ({
+
+    user_email: users.user_email,
+    user_id: users.user_id,
+    user_role: users.user_role,
+    user_fullname: users.user_fullname,
+
+}));
+
+  }
