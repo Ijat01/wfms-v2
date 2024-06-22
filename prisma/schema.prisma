@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model bookings {
@@ -18,8 +19,8 @@ model bookings {
   contact_no    String     @db.VarChar(255)
   created_at    DateTime   @default(now()) @db.Date
   updated_at    DateTime?  @updatedAt
-  packages      packages?  @relation(fields: [package_id], references: [package_id], onUpdate: SetNull, map: "FK")
-  users         users      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "USERBOOKING_FK")
+  packages      packages?  @relation(fields: [package_id], references: [package_id], onUpdate: SetNull)
+  users         users      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict)
   payments      payments[]
   tasks         tasks[]
 
@@ -31,8 +32,8 @@ model package_packageitems {
   pack_id         Int           @id @default(autoincrement())
   package_id      String?       @db.VarChar(11)
   packageitems_id Int?
-  packageitems    packageitems? @relation(fields: [packageitems_id], references: [packageitem_id], onDelete: Restrict, onUpdate: Restrict, map: "PACKAGEITEM_FK")
-  packages        packages?     @relation(fields: [package_id], references: [package_id], onDelete: Restrict, onUpdate: Restrict, map: "PACKAGE_FK")
+  packages        packages?     @relation(fields: [package_id], references: [package_id], onDelete: Restrict, onUpdate: Restrict)
+  packageitems    packageitems? @relation(fields: [packageitems_id], references: [packageitem_id], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([packageitems_id], map: "PACKAGEITEM_FK")
   @@index([package_id], map: "PACKAGE_FK")
@@ -70,7 +71,7 @@ model payments {
   payment_description String?   @db.VarChar(255)
   created_at          DateTime? @default(now()) @db.Date
   updated_at          DateTime? @updatedAt
-  bookings            bookings? @relation(fields: [booking_id], references: [booking_id], onDelete: Restrict, onUpdate: Restrict, map: "BOOKING_FK")
+  bookings            bookings? @relation(fields: [booking_id], references: [booking_id], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([booking_id], map: "BOOKING_FK")
 }
@@ -84,8 +85,8 @@ model taskassignments {
   taskassignment_status      String?   @db.VarChar(255)
   created_at                 DateTime? @default(now()) @db.Date
   updated_at                 DateTime? @updatedAt
-  tasks                      tasks?    @relation(fields: [task_id], references: [task_id], onUpdate: SetNull, map: "TASK_FK")
-  users                      users?    @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "USERTASK_FK")
+  tasks                      tasks?    @relation(fields: [task_id], references: [task_id], onUpdate: SetNull)
+  users                      users?    @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([task_id], map: "TASK_FK")
   @@index([user_id], map: "USERTASK_FK")
@@ -99,7 +100,7 @@ model tasks {
   created_at      DateTime?         @default(now()) @db.Date
   updated_at      DateTime?         @updatedAt
   taskassignments taskassignments[]
-  bookings        bookings?         @relation(fields: [booking_id], references: [booking_id], onUpdate: SetNull, map: "BOOKINGT_FK")
+  bookings        bookings?         @relation(fields: [booking_id], references: [booking_id], onUpdate: SetNull)
 
   @@index([booking_id], map: "BOOKINGT_FK")
 }
@@ -115,7 +116,7 @@ model users {
   created_by      String?           @db.VarChar(14)
   bookings        bookings[]
   taskassignments taskassignments[]
-  users           users?            @relation("usersTousers", fields: [created_by], references: [user_id], onUpdate: SetNull, map: "USERUSER_FK")
+  users           users?            @relation("usersTousers", fields: [created_by], references: [user_id], onUpdate: SetNull)
   other_users     users[]           @relation("usersTousers")
 
   @@index([created_by], map: "USERUSER_FK")
