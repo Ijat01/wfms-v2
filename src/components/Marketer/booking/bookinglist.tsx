@@ -1,12 +1,4 @@
-
-import Image from "next/image"
-import {
-  Delete,
-  MoreHorizontal,
-} from "lucide-react"
-
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -16,13 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
   Table,
   TableBody,
   TableCell,
@@ -30,11 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
 import { getBookingList } from "@/lib/data"
 import { DeleteBookingDialog } from "./DeleteBooking"
 import { UpdateBookingDialog } from "./UpdateBooking"

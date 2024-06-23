@@ -1,11 +1,5 @@
-
-import Image from "next/image"
-import {
-  MoreHorizontal,
-} from "lucide-react"
-
+"use client"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -14,13 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -34,17 +21,33 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { db } from "@/lib/db"
 import { UpdateStaffDialog } from "@/components/staff/UpdateStaffDialog"
 import { DeleteStaffDialog } from "./DeleteStaffDialog"
-import { useRouter } from "next/navigation"
-import { getAllUser } from "@/lib/data"
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+
+interface Users{
+
+  user_id:string,
+  user_fullname:string,
+  user_email:string,
+  user_role:string,
+}
 
 
-export async function CurrentStaffTable(){
+export function CurrentStaffTable(){
 
 
-  const data = await getAllUser();
+  const {
+    data: users,
+    error: usersError,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const response = await axios.get("/api/users/getuser");
+      return response.data;
+    },
+  });
 
   return (
     <>
@@ -70,7 +73,7 @@ export async function CurrentStaffTable(){
                     <TableBody>
                     
                         
-                    {data.map((user)=> (
+                    {users?.map((user: Users)=> (
                       <TableRow key= {user.user_id} >
                         <TableCell className=" flex items-center font-medium">
                           

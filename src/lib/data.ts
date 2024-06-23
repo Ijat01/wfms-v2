@@ -163,9 +163,6 @@ export async function getBookingTaskDataPending() {
   
     return result.map((booking) => ({
 
-      
-      
-
         booking_id: booking.booking_id.toLocaleString(),
         groomname: booking.groom_name,
         bridename: booking.bride_name,
@@ -181,14 +178,6 @@ export async function getBookingTaskDataPending() {
     }));
   };
 
-  export async function getAllPackage() {
-    const result = await db.packages.findMany({
-      
-    });
-
-    return result
-  };
-
   export async function getAllUser(){
 
     const result = await db.users.findMany({
@@ -198,7 +187,7 @@ export async function getBookingTaskDataPending() {
           user_role:true,
           user_fullname:true,
       } 
-  })
+  });
 
   return result.map((users) => ({
 
