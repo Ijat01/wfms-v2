@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import {
@@ -58,11 +58,15 @@ const page = () => {
                     Export
                   </span>
                 </Button>
+                
                 <AddStaffDialog/>
+                
               </div>
             </div>
             <TabsContent value="all">
+            <Suspense>
               <CurrentStaffTable/>
+            </Suspense>
             </TabsContent>
             <TabsContent value="active">
             
