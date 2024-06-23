@@ -152,38 +152,38 @@ export async function getBookingTaskDataPending() {
   }
 
   export async function getBookingList() {
-    
-    const session = await getAuthSession()
 
-    if (!session){
-      throw new Error('You must be signed in to create a user');
+    try {
+        const session = await getAuthSession();
+
+        if (!session) {
+            throw new Error('You must be signed in to create a user');
+        }
+
+        const result = await db.bookings.findMany({
+            include: {
+                packages: true,
+            }
+        });
+
+        return result.map((booking) => ({
+            booking_id: booking.booking_id.toLocaleString(),
+            groomname: booking.groom_name,
+            bridename: booking.bride_name,
+            bookingdate: booking.created_at?.toLocaleDateString(),
+            eventdate: booking.event_date?.toLocaleDateString(),
+            eventaddress: booking.event_address,
+            contact: booking.contact_no,
+            packagetype: booking.packages?.package_type,
+            packagename: booking.packages?.package_name,
+            packageid: booking.packages?.package_id
+        }));
+
+    } catch (error) {
+        console.error('Error fetching booking list:', error);
+        throw error;
     }
-
-    const result = await db.bookings.findMany({
-      include:{
-        packages:true,
-      }
-     
-    });
-
-    
-  
-    return result.map((booking) => ({
-
-        booking_id: booking.booking_id.toLocaleString(),
-        groomname: booking.groom_name,
-        bridename: booking.bride_name,
-        bookingdate: booking.created_at?.toLocaleDateString(),
-        eventdate: booking.event_date?.toLocaleDateString(),
-        eventaddress:booking.event_address,
-        contact: booking.contact_no,
-        packagetype:booking.packages?.package_type,
-        packagename:booking.packages?.package_name,
-        packageid:booking.packages?.package_id
-
-
-    }));
-  };
+}
 
   export async function getAllUser(){
 

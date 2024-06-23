@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import BookingList from '@/components/Marketer/booking/bookinglist'
+import Loading from './loading'
 
 
 
@@ -57,7 +58,9 @@ const page = () => {
               </div>
             </div>
             <TabsContent value="all">
-            <BookingList/>
+            <Suspense fallback={<Loading/>}>
+              <BookingList/>
+            </Suspense >
             </TabsContent>
             <TabsContent value="pending">
             </TabsContent>
