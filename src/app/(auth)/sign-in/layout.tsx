@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="">
-        <div className="h-screen grid grid-cols-3 grid-rows-3 items-center justify-center">
+        <div className=" h-screen grid grid-cols-auto place-items-center justify-center">
 
         {children}  
 

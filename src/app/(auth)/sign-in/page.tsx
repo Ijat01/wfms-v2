@@ -39,7 +39,7 @@ const Page = () => {
 
   // Render the sign-in form using UI components
   return (
-    <main className=" grid col-start-2 row-start-2 justify-center ">
+    <main className="">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
