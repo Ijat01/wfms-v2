@@ -1,3 +1,5 @@
+
+
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -45,6 +47,7 @@ export async function CurrentStaffTable(){
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Ic number</TableHead>
+                        <TableHead>Email</TableHead>
                         <TableHead>
                           <span className="sr-only">Actions</span>
                         </TableHead>
@@ -69,8 +72,13 @@ export async function CurrentStaffTable(){
                         <TableCell>
                           <Badge  variant="outline">{user.user_id}</Badge>
                         </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{user.user_email}</Badge>
+                        </TableCell>
                         <TableCell >
                         <div className="flex gap-4 justify-end mr-5">
+                        <UpdateStaffDialog user={user} />
+                        <DeleteStaffDialog user={user} />
                         </div>
                         </TableCell>
                       </TableRow>

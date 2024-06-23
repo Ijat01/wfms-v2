@@ -1,54 +1,19 @@
 
 import React from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import Image from "next/image"
-import Link from "next/link"
 import {
   File,
-  Home,
-  LineChart,
   ListFilter,
-  MoreHorizontal,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Users2,
 } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import CurrentStaffTable from '@/components/staff/CurrentStaffTable'
 import { AddStaffDialog } from '@/components/staff/AddStaffDialog'
 
