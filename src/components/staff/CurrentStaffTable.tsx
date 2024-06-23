@@ -1,4 +1,3 @@
-"use client"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -23,31 +22,13 @@ import {
 } from "@/components/ui/avatar"
 import { UpdateStaffDialog } from "@/components/staff/UpdateStaffDialog"
 import { DeleteStaffDialog } from "./DeleteStaffDialog"
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-
-interface Users{
-
-  user_id:string,
-  user_fullname:string,
-  user_email:string,
-  user_role:string,
-}
+import { getAllUser } from "@/lib/data"
 
 
-export function CurrentStaffTable(){
+export async function CurrentStaffTable(){
 
 
-  const {
-    data: users,
-    error: usersError,
-  } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => {
-      const response = await axios.get("/api/users/getuser");
-      return response.data;
-    },
-  });
+  const data = await getAllUser();
 
   return (
     <>
@@ -64,7 +45,6 @@ export function CurrentStaffTable(){
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Ic number</TableHead>
-                        <TableHead>Email</TableHead>
                         <TableHead>
                           <span className="sr-only">Actions</span>
                         </TableHead>
@@ -73,7 +53,7 @@ export function CurrentStaffTable(){
                     <TableBody>
                     
                         
-                    {users?.map((user: Users)=> (
+                    {data.map((user)=> (
                       <TableRow key= {user.user_id} >
                         <TableCell className=" flex items-center font-medium">
                           
@@ -89,13 +69,8 @@ export function CurrentStaffTable(){
                         <TableCell>
                           <Badge  variant="outline">{user.user_id}</Badge>
                         </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{user.user_email}</Badge>
-                        </TableCell>
                         <TableCell >
                         <div className="flex gap-4 justify-end mr-5">
-                        <UpdateStaffDialog user={user} />
-                        <DeleteStaffDialog user={user} />
                         </div>
                         </TableCell>
                       </TableRow>
