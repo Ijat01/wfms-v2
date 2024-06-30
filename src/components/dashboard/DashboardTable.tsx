@@ -151,7 +151,7 @@ return(   <Tabs defaultValue="week">
                       Task need to be completed this week
                     </CardDescription>
                   </CardHeader>
-            <div className="md:max-h-[462px] overflow overflow-y-auto">    
+            <div className="md:max-h-[400px] overflow-y-auto">    
                   <CardContent>
             
                     <Table>

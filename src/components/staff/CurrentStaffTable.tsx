@@ -46,7 +46,7 @@ export async function CurrentStaffTable(){
                     <TableHeader>
                       <TableRow>
                         <TableHead>Name</TableHead>
-                        <TableHead>Ic number</TableHead>
+
                         <TableHead>Email</TableHead>
                         <TableHead>
                           <span className="sr-only">Actions</span>
@@ -68,9 +68,6 @@ export async function CurrentStaffTable(){
                           <div className="pl-4 text-clip">{user.user_fullname}</div>
                           <div className="pl-4 text-xs text-gray-500"> {user.user_role} </div>
                         </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge  variant="outline">{user.user_id}</Badge>
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">{user.user_email}</Badge>

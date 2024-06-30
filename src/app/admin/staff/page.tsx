@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import CurrentStaffTable from '@/components/staff/CurrentStaffTable'
 import { AddStaffDialog } from '@/components/staff/AddStaffDialog'
+import Loading from './loading'
 
 
 
@@ -63,13 +64,17 @@ const page = () => {
               </div>
             </div>
             <TabsContent value="all">
-            <Suspense>
+
+            <Suspense fallback={<Loading/>}>
               <CurrentStaffTable/>
             </Suspense>
+
             </TabsContent>
+
             <TabsContent value="active">
             
             </TabsContent>
+            
           </Tabs>
     </main>
   )

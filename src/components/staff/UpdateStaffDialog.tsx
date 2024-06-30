@@ -109,9 +109,9 @@ export function UpdateStaffDialog({ user }: UpdateStaffDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="pt-4">
+          <div className="hidden pt-4">
             <Label htmlFor="icno">IC Number</Label>
-            <Input id="icno" {...register("icno")} readOnly/>
+            <Input id="icno" {...register("icno")} />
             {errors.icno && <p>{errors.icno.message}</p>}
           </div>
           <div className="pt-4">

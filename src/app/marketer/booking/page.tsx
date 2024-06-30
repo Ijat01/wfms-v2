@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import BookingList from '@/components/Marketer/booking/bookinglist'
 import Loading from './loading'
+import { AddBookingDialog } from '@/components/Marketer/booking/AddBooking'
 
 
 
@@ -53,7 +54,7 @@ const page = () => {
                     </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-               
+               <AddBookingDialog/>
                 
               </div>
             </div>

@@ -151,7 +151,7 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="pt-4">
+          <div className="hidden pt-4">
             <Label htmlFor="booking_id">Booking ID</Label>
             <Input type="number" id="booking_id" {...register("booking_id")} readOnly />
             {errors.booking_id && <p>{errors.booking_id.message}</p>}

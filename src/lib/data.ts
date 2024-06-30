@@ -212,3 +212,36 @@ export async function getBookingTaskDataPending() {
 }));
 
   }
+
+  export async function getAllTaskAssignment(){
+
+    const session = await getAuthSession()
+
+    if (!session){
+      throw new Error('You must be signed in to create a user');
+    }
+
+    const result = await db.taskassignments.findMany({
+      include:{
+        users:{
+          select:{
+            user_fullname: true,
+            user_role:true
+          }
+        }
+      },
+    }
+    )
+
+    return result.map((taskassignment) => ({
+
+      taskassignment_id: taskassignment.taskassignment_id.toLocaleString(),
+      user_name: taskassignment.users?.user_fullname,
+      user_role: taskassignment.users?.user_role,
+      taskassignment_role: taskassignment.taskassignment_role,
+      taskassignment_status: taskassignment.taskassignment_status,
+      taskassignment_description:taskassignment.taskassignment_description,
+  
+  }));
+
+  }
