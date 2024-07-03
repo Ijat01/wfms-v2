@@ -4,9 +4,7 @@ import { db } from "./db";
 
 export async function getBookingTaskDataAll() {
   const result = await db.tasks.findMany({
-    orderBy: {
-        task_status: 'desc' 
-      },
+    
     include: {
       bookings: {
         select: {
@@ -14,16 +12,22 @@ export async function getBookingTaskDataAll() {
           event_address: true,
           bride_name: true,
           groom_name: true,
+         
         },
       },
+    }, 
+    orderBy: {
+      task_id: 'asc' 
     },
   });
 
   return result.map((task) => ({
-    bookingdate: task.created_at,
+    bookingid: task.booking_id,
+    bookingdate: task.created_at?.toLocaleDateString(),
+    customername: `${task.bookings?.groom_name} & ${task.bookings?.bride_name}`.toLocaleUpperCase(),
     taskid: task.task_id,
     taskstatus: task.task_status,
-    event_date: task.bookings?.event_date, 
+    event_date: task.bookings?.event_date.toLocaleDateString(), 
     event_address: task.bookings?.event_address, 
     bride_name: task.bookings?.bride_name, 
     groom_name: task.bookings?.groom_name, 

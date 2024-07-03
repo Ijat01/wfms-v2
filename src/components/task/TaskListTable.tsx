@@ -4,7 +4,7 @@ import * as React from "react";
 import {
   CaretSortIcon,
   ChevronDownIcon,
-  DotsHorizontalIcon,
+  ChevronUpIcon,
 } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -20,16 +20,6 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -39,19 +29,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getBookingList } from "@/lib/data";
 import { DeleteBookingDialog } from "../Marketer/booking/DeleteBooking";
 import { UpdateBookingDialog } from "../Marketer/booking/UpdateBooking";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { Booking } from "@/types/types";
 import { AddBookingDialog } from "../Marketer/booking/AddBooking";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 interface BookingListProps {
-  bookings: Booking[];
+  bookings: any[];
+  task: any[];
 }
 
-export function BookingList({ bookings }: BookingListProps) {
+export function BookingList({ bookings, task }: BookingListProps) {
 
   // Define columns for the booking table
   const columns: ColumnDef<typeof bookings[0]>[] = [
@@ -61,24 +52,23 @@ export function BookingList({ bookings }: BookingListProps) {
     },
     {
       accessorKey: "customername",
-      header: ({ column }) => { return (
+      header: ({ column }) => (
         <div className="text-center">
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Customer
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Customer
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
         </div>
-      )
-      },
+      ),
       cell: ({ row }) => (
-      <div className="text-center">
-        <Badge variant="outline">
-          {row.getValue("customername")}
-        </Badge>
-      </div>
+        <div className="text-center">
+          <Badge variant="outline">
+            {row.getValue("customername")}
+          </Badge>
+        </div>
       ),
     },
     {
@@ -155,40 +145,40 @@ export function BookingList({ bookings }: BookingListProps) {
           <CardDescription>Manage your task</CardDescription>
         </CardHeader>
         <CardContent>
-              <div className="flex items-center py-4">
-              <div className="grow">
+          <div className="flex items-center py-4">
+            <div className="grow">
               <Input
-              placeholder="Filter customers..."
-              value={(table.getColumn("customername")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("customername")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-              </div>
+                placeholder="Filter customers..."
+                value={(table.getColumn("customername")?.getFilterValue() as string) ?? ""}
+                onChange={(event) =>
+                  table.getColumn("customername")?.setFilterValue(event.target.value)
+                }
+                className="max-w-sm"
+              />
+            </div>
             <div className="space-x-2">
-            <DropdownMenu >
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table.getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <AddBookingDialog/>
+              <DropdownMenu >
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-auto">
+                    Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {table.getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <AddBookingDialog/>
             </div>
           </div>
           <div className="rounded-md border">
@@ -209,13 +199,40 @@ export function BookingList({ bookings }: BookingListProps) {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+                    <Collapsible key={row.id} asChild>
+                      <>
+                        <CollapsibleTrigger asChild>
+                          <TableRow data-state={row.getIsSelected() && "selected"}>
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent asChild>
+                          <TableRow>
+                            <TableCell colSpan={8}>
+                            <Table>
+                              <TableHeader>
+                                <TableHead className="w-[400px]">Event Type</TableHead>
+                                <TableHead> Status</TableHead>
+                              </TableHeader>
+                              <TableBody>
+                              {task.filter(t => t.bookingid == row.original.booking_id).map(task => (
+                              <TableRow key={task.taskid}>
+
+                                <TableCell><Badge variant="outline">{task.task_type}</Badge></TableCell>
+                                <TableCell><Badge variant={task.taskstatus === 'Pending' ? 'destructive' : task.taskstatus === 'Completed' ? 'success' : 'default'}>{task.taskstatus}</Badge></TableCell>
+                              </TableRow>
+                              ))}
+                              </TableBody>
+                            </Table>
+                            </TableCell>
+                          </TableRow>
+                        </CollapsibleContent>
+                      </>
+                    </Collapsible>
                   ))
                 ) : (
                   <TableRow>
@@ -234,30 +251,25 @@ export function BookingList({ bookings }: BookingListProps) {
             <strong>{table.getPageCount()}</strong> pages
           </div>
           <div className="space-x-2">
-          
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
           </div>
         </CardFooter>
       </Card>
     </div>
   );
 }
-
-
-

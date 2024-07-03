@@ -29,3 +29,15 @@ export interface Booking {
   packagename: string | undefined;
   packageid: string | undefined;
 }
+
+export interface TaskList {
+    bookingdate: string | undefined;
+    customername: string;
+    taskid: number;
+    taskstatus: string | null;
+    event_date: string | undefined;
+    event_address: string | undefined;
+    bride_name: string | undefined;
+    groom_name: string | undefined;
+    task_type: string | null
+}

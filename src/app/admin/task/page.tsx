@@ -4,17 +4,15 @@ import TaskListPending from '@/components/task/tasklistpending'
 import TaskStaff from '@/components/task/taskstaff'
 import TaskKanban from '@/components/task/addTask'
 import Board from '@/components/task/Board'
-import { getAllTaskAssignment, getBookingList } from '@/lib/data'
-import { BookingList } from '@/components/task/tasklistdatatable'
-
-
-
+import { getAllTaskAssignment, getBookingList, getBookingTaskDataAll } from '@/lib/data'
+import { BookingList } from '@/components/task/TaskListTable'
 
 
 const page = async () => {
 
   const data = await getAllTaskAssignment();
-  const booking = await getBookingList()
+  const task = await getBookingTaskDataAll();
+  const booking = await getBookingList();
 
   return (
 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
@@ -30,7 +28,7 @@ const page = async () => {
             </div>
 
             <TabsContent value="all">
-              <BookingList bookings = {booking} />
+              <BookingList bookings={booking} task={task} />
             </TabsContent>
 
             <TabsContent value="pending">
