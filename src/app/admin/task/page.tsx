@@ -1,11 +1,12 @@
 import React from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import  TaskListAll from '@/components/task/tasklist'
 import TaskListPending from '@/components/task/tasklistpending'
 import TaskStaff from '@/components/task/taskstaff'
 import TaskKanban from '@/components/task/addTask'
 import Board from '@/components/task/Board'
-import { getAllTaskAssignment } from '@/lib/data'
+import { getAllTaskAssignment, getBookingList } from '@/lib/data'
+import { BookingList } from '@/components/task/tasklistdatatable'
+
 
 
 
@@ -13,6 +14,7 @@ import { getAllTaskAssignment } from '@/lib/data'
 const page = async () => {
 
   const data = await getAllTaskAssignment();
+  const booking = await getBookingList()
 
   return (
 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
@@ -28,7 +30,7 @@ const page = async () => {
             </div>
 
             <TabsContent value="all">
-              <TaskListAll/>
+              <BookingList bookings = {booking} />
             </TabsContent>
 
             <TabsContent value="pending">

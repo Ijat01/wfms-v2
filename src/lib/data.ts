@@ -163,13 +163,17 @@ export async function getBookingTaskDataPending() {
         const result = await db.bookings.findMany({
             include: {
                 packages: true,
-            }
+            },
+            orderBy: {
+              booking_id: 'asc', // Sort by booking_id in ascending order
+            },
         });
 
         return result.map((booking) => ({
             booking_id: booking.booking_id.toLocaleString(),
-            groomname: booking.groom_name,
-            bridename: booking.bride_name,
+            customername: `${booking.groom_name} & ${booking.bride_name}`.toLocaleUpperCase(),
+            groomname: booking.groom_name.toUpperCase(),
+            bridename: booking.bride_name.toLocaleUpperCase(),
             bookingdate: booking.created_at?.toLocaleDateString(),
             eventdate: booking.event_date?.toLocaleDateString(),
             eventaddress: booking.event_address,

@@ -120,7 +120,7 @@ export function AddBookingDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="h-7 gap-1" variant="default">
+        <Button  variant="default">
           Add Booking
         </Button>
       </DialogTrigger>

@@ -39,12 +39,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DeleteBookingDialog } from "./DeleteBooking";
-import { UpdateBookingDialog } from "./UpdateBooking";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { getBookingList } from "@/lib/data";
+import { DeleteBookingDialog } from "../Marketer/booking/DeleteBooking";
+import { UpdateBookingDialog } from "../Marketer/booking/UpdateBooking";
+import { Badge } from "../ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Booking } from "@/types/types";
-import { AddBookingDialog } from "./AddBooking";
+import { AddBookingDialog } from "../Marketer/booking/AddBooking";
 
 interface BookingListProps {
   bookings: Booking[];
@@ -150,8 +151,8 @@ export function BookingList({ bookings }: BookingListProps) {
     <div className="w-full">
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="pb-2">
-          <CardTitle>Booking</CardTitle>
-          <CardDescription>Manage customers booking</CardDescription>
+          <CardTitle>Task</CardTitle>
+          <CardDescription>Manage your task</CardDescription>
         </CardHeader>
         <CardContent>
               <div className="flex items-center py-4">
