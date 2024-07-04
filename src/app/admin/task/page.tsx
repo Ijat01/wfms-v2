@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import TaskListPending from '@/components/task/tasklistpending'
 import TaskStaff from '@/components/task/taskstaff'
@@ -6,6 +6,8 @@ import TaskKanban from '@/components/task/addTask'
 import Board from '@/components/task/Board'
 import { getAllTaskAssignment, getBookingList, getBookingTaskDataAll } from '@/lib/data'
 import { BookingList } from '@/components/task/TaskListTable'
+import Loading from './loading'
+
 
 
 const page = async () => {
@@ -28,7 +30,11 @@ const page = async () => {
             </div>
 
             <TabsContent value="all">
+
+            <Suspense fallback={<Loading/>}>
               <BookingList bookings={booking} task={task} />
+            </Suspense>
+
             </TabsContent>
 
             <TabsContent value="pending">

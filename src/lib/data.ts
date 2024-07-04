@@ -35,7 +35,111 @@ export async function getBookingTaskDataAll() {
   }));
 };
 
+export async function getEventDetailsBooking(booking_id: string ) {
+
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const newbookingid = +booking_id;
+
+  const result = await db.bookings.findMany({
+    where: {
+      booking_id: newbookingid,
+    },
+  });
+
+  return result.map((booking) => ({
+    bookingid: booking.booking_id,
+    customername: `${booking.groom_name} & ${booking.bride_name}`.toLocaleUpperCase(),
+    event_date: booking.event_date.toLocaleDateString(), 
+    event_address: booking.event_address, 
+  }));
+};
+
+export async function getEventDetailsTask(booking_id: string ) {
+  const newbookingid = +booking_id;
+
+  const result = await db.tasks.findMany({
+    where: {
+      booking_id: newbookingid,
+    },
+    include: {
+      taskassignments: {
+        include: {
+          users: {
+            select: {
+              user_fullname: true,
+              user_role: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const groupedResult = result.map((task) => ({
+      taskid: task.task_id,
+      tasktype: task.task_type,
+      taskstatus: task.task_status,
+      assignments: task.taskassignments.map((assignment) => ({
+      taskassignmentid: assignment.taskassignment_id,
+      username: assignment.users?.user_fullname || null,
+      userrole: assignment.users?.user_role || null,
+      taskassignment_role: assignment.taskassignment_role || null,
+      taskassignment_status: assignment.taskassignment_status || null,
+    })),
+  }));
+
+  return groupedResult;
+  
+};
+
+export async function getEventDetailsTaskAssignment(taskid: number ) {
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+  
+
+  const result = await db.taskassignments.findMany({
+    where:{
+      task_id: taskid
+    },
+    include:{
+      users:{
+        select:{
+          user_fullname: true,
+          user_role:true
+        }
+      }
+    },
+  }
+  )
+
+  return result.map((taskassignment) => ({
+
+    taskassignment_id: taskassignment.taskassignment_id.toLocaleString(),
+    user_name: taskassignment.users?.user_fullname,
+    user_role: taskassignment.users?.user_role,
+    taskassignment_role: taskassignment.taskassignment_role,
+    taskassignment_status: taskassignment.taskassignment_status,
+    taskassignment_description:taskassignment.taskassignment_description,
+
+  }))
+  
+};
+
 export async function getBookingTaskDataPending() {
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+  
 
     const result = await db.tasks.findMany({
      where:{

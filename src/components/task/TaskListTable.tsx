@@ -4,8 +4,10 @@ import * as React from "react";
 import {
   CaretSortIcon,
   ChevronDownIcon,
-  ChevronUpIcon,
 } from "@radix-ui/react-icons";
+import {
+Eye
+} from "lucide-react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -29,13 +31,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DeleteBookingDialog } from "../Marketer/booking/DeleteBooking";
-import { UpdateBookingDialog } from "../Marketer/booking/UpdateBooking";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { AddBookingDialog } from "../Marketer/booking/AddBooking";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import Link from "next/link";
 
 interface BookingListProps {
   bookings: any[];
@@ -82,27 +83,27 @@ export function BookingList({ bookings, task }: BookingListProps) {
       cell: ({ row }) => <Badge variant="outline">{row.getValue("eventaddress")}</Badge>,
     },
     {
-      accessorKey: "eventdate",
-      header: "Event Date",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("eventdate")}</Badge>,
-    },
-    {
       accessorKey: "packagename",
       header:"Package",
       cell: ({ row }) => <Badge variant="outline">{row.getValue("packagename")}</Badge>,
     },
     {
-      accessorKey: "bookingdate",
-      header: "Booking Date",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("bookingdate")}</Badge>,
+      accessorKey: "eventdate",
+      header: "Event Date",
+      cell: ({ row }) => <Badge variant="outline">{row.getValue("eventdate")}</Badge>,
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => (
         <div className="flex gap-4 justify-end mr-5">
-          <UpdateBookingDialog booking={row.original} />
-          <DeleteBookingDialog booking={row.original} />
+          <Button className="bg-blue-500"><Link href={{
+            pathname: "/admin/taskdetail",
+            query:{
+              bookingid: row.original.booking_id,
+            }
+          }}><Eye></Eye></Link>
+          </Button>
         </div>
       ),
     },
@@ -211,10 +212,10 @@ export function BookingList({ bookings, task }: BookingListProps) {
                           </TableRow>
                         </CollapsibleTrigger>
                         <CollapsibleContent asChild>
-                          <TableRow>
+                          <TableRow className="bg-gray-100">
                             <TableCell colSpan={8}>
                             <Table>
-                              <TableHeader>
+                              <TableHeader className="text-xs">
                                 <TableHead className="w-[400px]">Event Type</TableHead>
                                 <TableHead> Status</TableHead>
                               </TableHeader>
