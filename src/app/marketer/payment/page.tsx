@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { PaymentList } from '@/components/Marketer/payment/paymentlist'
 import { getBookingTaskDataAll, getPaymentDataAll, getPaymentList } from '@/lib/data'
-
+import Loading from './loading'
 
 
 
@@ -24,7 +24,9 @@ const page = async () => {
 
             </div>
             <TabsContent value="all">
+            <Suspense fallback={<Loading/>}>
             <PaymentList payments={payments} paymentdetails={paymentdetails}/>
+            </Suspense>
             </TabsContent>
           </Tabs>
     </main>
