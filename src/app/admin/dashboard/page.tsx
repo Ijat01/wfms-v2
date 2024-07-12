@@ -1,9 +1,9 @@
 
 import { DashboardTable } from '@/components/dashboard/DashboardTable'
 import { DashboardAlertCard } from '@/components/dashboard/DashboardAlertCard'
-import React from 'react'
+import React, { Suspense } from 'react'
 import MyTaskCard from '@/components/dashboard/MyTaskCard'
-import { useRouter } from 'next/router'
+import Loading from './loading'
 
 const page = () => {
   
@@ -12,13 +12,19 @@ const page = () => {
     <div className=" grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <div className=" grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-3">
               
+            <Suspense fallback={<Loading/>}>
               <DashboardAlertCard/>
+            </Suspense>
               
             </div>
+            <Suspense fallback={<Loading/>}>
             <DashboardTable/>
+            </Suspense>
             
     </div>
+    <Suspense fallback={<Loading/>}>
     <MyTaskCard/>
+    </Suspense>
   </main>
   )
 }
