@@ -1,18 +1,23 @@
 import { Card,CardHeader,CardDescription,CardTitle,CardContent,CardFooter } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { countBooking, countComplete, countPending } from "@/lib/data"
 
 
-export function DashboardAlertCard(){
+export async function DashboardAlertCard(){
+    const data = await countBooking()
+    const pending = await countPending()
+    const complete = await countComplete()
 return(
 <>
     <Card x-chunk=" dashboard-05-chunk-1">
         <CardHeader className="pb-2">
-        <CardDescription>Ongoing Task</CardDescription>
-        <CardTitle className="text-4xl">10</CardTitle>
+        <CardDescription className="font-bold text-black">New Booking</CardDescription>
+    
+        <CardTitle className="text-4xl">{data}</CardTitle>
         </CardHeader>
         <CardContent>
         <div className="text-xs text-muted-foreground">
-            +25% from last month
+            new booking for this month
         </div>
         </CardContent>
         <CardFooter>
@@ -22,12 +27,12 @@ return(
 
     <Card x-chunk="dashboard-05-chunk-2">
     <CardHeader className="pb-2">
-    <CardDescription>Ongoing Task</CardDescription>
-    <CardTitle className="text-4xl">5</CardTitle>
+    <CardDescription className="font-bold text-black">In Progress Task</CardDescription>
+    <CardTitle className="text-4xl">{pending}</CardTitle>
     </CardHeader>
     <CardContent>
     <div className="text-xs text-muted-foreground">
-        -25% from last week
+        Total task still in progress
     </div>
     </CardContent>
     <CardFooter>
@@ -37,12 +42,12 @@ return(
 
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="pb-2">
-    <CardDescription>Completed Task</CardDescription>
-    <CardTitle className="text-4xl">8</CardTitle>
+    <CardDescription className="font-bold text-black">Completed Task</CardDescription>
+    <CardTitle className="text-4xl">{complete}</CardTitle>
     </CardHeader>
     <CardContent>
     <div className="text-xs text-muted-foreground">
-        +25% from last week
+       Total completed task this month
     </div>
     </CardContent>
     <CardFooter>

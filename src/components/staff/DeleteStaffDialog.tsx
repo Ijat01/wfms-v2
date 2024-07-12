@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
+import { Trash2 } from "lucide-react";
 import axios from 'axios';
 import { toast } from '@/components/ui/use-toast';
 import {
@@ -68,7 +69,7 @@ export function DeleteStaffDialog({ user }: DeleteStaffDialogProps) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" onClick={openDialog}>
-          Delete
+         <Trash2></Trash2>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

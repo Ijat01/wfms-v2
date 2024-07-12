@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import CurrentStaffTable from '@/components/staff/CurrentStaffTable'
+import {CurrentStaffTable} from '@/components/staff/CurrentStaffTable'
 import { AddStaffDialog } from '@/components/staff/AddStaffDialog'
 import Loading from './loading'
 

@@ -85,22 +85,22 @@ export function AddStaffDialog() {
           <div className="pt-4">
             <Label htmlFor="icno">IC Number</Label>
             <Input id="icno" {...register("icno")} />
-            {errors.icno && <p>{errors.icno.message}</p>}
+            {errors.icno && <p className="text-red-400 text-sm">{errors.icno.message}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="fullname">Full Name</Label>
             <Input id="fullname" {...register("fullname")} />
-            {errors.fullname && <p>{errors.fullname.message}</p>}
+            {errors.fullname && <p className="text-red-400 text-sm">{errors.fullname.message}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="email">Email</Label>
             <Input id="email" {...register("email")} />
-            {errors.email && <p>{errors.email.message}</p>}
+            {errors.email && <p className="text-red-400 text-sm">{errors.email.message}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" {...register("password")} />
-            {errors.password && <p>{errors.password.message}</p>}
+            {errors.password && <p className="text-red-400 text-sm">{errors.password.message}</p>}
           </div>
           <div className="pt-4">
 
@@ -126,7 +126,7 @@ export function AddStaffDialog() {
                 </label>
               </div>
             </RadioGroup>
-            {errors.role && <p>{errors.role.message}</p>}
+            {errors.role && <p className="text-red-400 text-sm">{errors.role.message}</p>}
           </div>
           <DialogFooter className="pt-4">
             <Button type="submit" >

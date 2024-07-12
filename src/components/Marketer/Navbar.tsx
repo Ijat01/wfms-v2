@@ -1,14 +1,16 @@
+"use client"
 import * as React from "react"
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation";
 import {
 
   Home,
   Package2,
-  Settings,
   ClipboardList,
   NotebookPen,
   CalendarDays,
-  Users2,
+  Banknote,
+  LogOut,
 } from "lucide-react"
 import {
   Tooltip,
@@ -16,8 +18,16 @@ import {
   TooltipTrigger,
   TooltipProvider
 } from "@/components/ui/tooltip"
+import { signOut } from "next-auth/react";
 
 export function Navbar()  {
+  const pathname = usePathname();
+
+  // Function to determine if a link is active
+  const isActive = (href: string) => {
+    return pathname === href ? "bg-gray-200 text-gray-800" : "text-muted-foreground";
+  };
+  
   return (
 
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -35,7 +45,7 @@ export function Navbar()  {
             <TooltipTrigger asChild>
               <Link
                 href="/marketer/dashboard"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/dashboard")} transition-colors hover:text-foreground md:h-8 md:w-8`}
               >
                 <Home className="h-5 w-5" />
                 <span className="sr-only">Dashboard</span>
@@ -47,7 +57,7 @@ export function Navbar()  {
             <TooltipTrigger asChild>
               <Link
                 href="/marketer/booking"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/booking")} transition-colors hover:text-foreground md:h-8 md:w-8`}
               >
                 <NotebookPen className="h-5 w-5" />
                 <span className="sr-only">Booking</span>
@@ -58,8 +68,20 @@ export function Navbar()  {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
+                href="/marketer/payment"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/payment")} transition-colors hover:text-foreground md:h-8 md:w-8`}
+              >
+                <Banknote className="h-5 w-5" />
+                <span className="sr-only">Payment</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Payment</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
                 href="/marketer/task"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/task")} transition-colors hover:text-foreground md:h-8 md:w-8`}
               >
                 <ClipboardList className="h-5 w-5" />
                 <span className="sr-only">Task</span>
@@ -71,7 +93,7 @@ export function Navbar()  {
             <TooltipTrigger asChild>
               <Link
                 href="/marketer/calendar"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/calendar")} transition-colors hover:text-foreground md:h-8 md:w-8`}
               >
                 <CalendarDays className="h-5 w-5" />
                 <span className="sr-only">Calendar</span>
@@ -89,11 +111,11 @@ export function Navbar()  {
                 href=""
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
-                <Settings className="h-5 w-5" />
-                <span className="sr-only">Settings</span>
+                <LogOut onClick={() => signOut()} className=" h-5 w-5" />
+                <span className="sr-only">Logout</span>
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Settings</TooltipContent>
+            <TooltipContent side="right">Logout</TooltipContent>
           </Tooltip>
         </TooltipProvider>
         </nav>

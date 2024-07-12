@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { getAuthSession } from '@/lib/auth';
 
 const UpdateTaskAssignmentSchema = z.object({
-    taskassignment_id: z.string(),
-    taskassignment_status: z.string(),
+    task_id: z.string(),
+    task_status: z.string(),
 });
 
 export async function PATCH(req: Request) {
@@ -13,7 +13,7 @@ export async function PATCH(req: Request) {
         const body = await req.json();
         console.log("Request Body:", body);
 
-        const { taskassignment_id, taskassignment_status } = UpdateTaskAssignmentSchema.parse(body);
+        const { task_id, task_status } = UpdateTaskAssignmentSchema.parse(body);
 
         // Ensure the user is authenticated
         const session = await getAuthSession();
@@ -23,13 +23,13 @@ export async function PATCH(req: Request) {
 
         console.log('Session ID:', session.user.id);
 
-        const newTaskAssignmentId = +taskassignment_id;
+        const newTaskId = +task_id;
         
 
-        const updatedTaskAssignment = await db.taskassignments.update({
-            where: { taskassignment_id: newTaskAssignmentId },
+        const updatedTaskAssignment = await db.tasks.update({
+            where: { task_id: newTaskId },
             data: {
-                taskassignment_status: taskassignment_status,
+                task_status: task_status,
             },
         });
 

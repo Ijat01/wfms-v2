@@ -6,7 +6,7 @@ import { BookingSchema, BookingSchemaType } from '@/lib/validators/booking';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { packageid, groomname, bridename, eventaddress, contactno, eventdate, confirmProceed} = BookingSchema.parse(body) as BookingSchemaType;
+    const { lock_by, packageid, groomname, bridename, eventaddress, contactno, eventdate, payment_total, paymentdetail_amount, paymentdetails_type, paymentdetails_desc, confirmProceed } = BookingSchema.parse(body) as BookingSchemaType;
 
     // Ensure the user is authenticated
     const session = await getAuthSession();
@@ -19,16 +19,23 @@ export async function POST(req: Request) {
     const formattedDate = new Date(eventdate).toISOString();
 
     // Count bookings for the specified event date
-    const checkbooking = await db.bookings.count({
+    const checkbooking = await db.events.findMany({
       where: {
         event_date: formattedDate,
       },
+      distinct: ['booking_id'],
     });
 
-    console.log('Bookings for date:', checkbooking);
+    const bookingCount = checkbooking.length;
+
+    console.log('Bookings for date:', bookingCount);
+
+    const newPaymentTotal = parseFloat(payment_total);
+    const newPaymentDetailsAmount = parseFloat(paymentdetail_amount);
+    const newBalance = newPaymentTotal - newPaymentDetailsAmount;
 
     // Check if booking limit exceeded
-    if (checkbooking >= 5 && !confirmProceed) {
+    if (bookingCount >= 5 && !confirmProceed) {
       return new Response('Booking limit exceeded for this date. Do you want to proceed?', { status: 400 });
     }
 
@@ -39,12 +46,56 @@ export async function POST(req: Request) {
         package_id: packageid,
         groom_name: groomname.toUpperCase(),
         bride_name: bridename.toUpperCase(),
-        event_date: formattedDate, // Adjust as needed
-        event_address: eventaddress,
         contact_no: contactno,
         created_at: new Date(),
+        lock_by: lock_by.toUpperCase(),
       },
     });
+    console.log('Payment successfully created:', newBooking);
+
+    const newPayment = await db.payments.create({
+      data: {
+        payment_total: newPaymentTotal,
+        payment_balance: newBalance,
+        booking_id: newBooking.booking_id
+      }
+    });
+
+    console.log('Payment successfully created:', newPayment);
+
+    const createEvent = async (eventType: string) => {
+      return await db.events.create({
+        data: {
+          event_type: eventType,
+          event_status: "No Task Assigned",
+          event_date: formattedDate,
+          event_address: eventaddress,
+          booking_id: newBooking.booking_id,
+         
+        },
+      });
+    };
+
+    const newPaymentDetails = await db.paymentdetails.create({
+      data: {
+        payment_id: newPayment.payment_id,
+        paymentdetails_type: paymentdetails_type,
+        paymentdetails_desc: paymentdetails_desc,
+        paymentdetails_amount: newPaymentDetailsAmount,
+        paymentdetails_status: "Complete",
+      },
+    });
+
+    console.log('Payment details successfully created:', newPaymentDetails);
+
+    if (["N01", "N02", "N03"].includes(packageid)) {
+      await createEvent("Nikah");
+    } else if (["S01", "S02", "S03"].includes(packageid)) {
+      await createEvent("Sanding");
+    } else {
+      await createEvent("Nikah");
+      await createEvent("Sanding");
+    }
 
     console.log('Booking successfully created:', newBooking);
 

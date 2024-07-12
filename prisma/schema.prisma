@@ -3,27 +3,26 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model bookings {
-  booking_id    Int        @id @default(autoincrement())
-  user_id       String     @db.VarChar(14)
-  package_id    String?    @db.VarChar(255)
-  groom_name    String     @db.VarChar(255)
-  bride_name    String     @db.VarChar(255)
-  event_date    DateTime   @db.Date
-  event_address String     @db.VarChar(255)
-  contact_no    String     @db.VarChar(255)
-  created_at    DateTime   @default(now()) @db.Date
-  updated_at    DateTime?  @updatedAt
-  packages      packages?  @relation(fields: [package_id], references: [package_id], onUpdate: SetNull)
-  users         users      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict)
+  booking_id    Int       @id @default(autoincrement())
+  user_id       String    @db.VarChar(14)
+  package_id    String?   @db.VarChar(255)
+  groom_name    String    @db.VarChar(255)
+  bride_name    String    @db.VarChar(255)
+  contact_no    String    @db.VarChar(255)
+  lock_by       String?   @db.VarChar(255)
+  created_at    DateTime  @default(now()) @db.Date
+  updated_at    DateTime? @updatedAt
+  packages      packages? @relation(fields: [package_id], references: [package_id], onUpdate: SetNull)
+  users         users     @relation(fields: [user_id], references: [user_id], onUpdate: Restrict)
   payments      payments[]
-  tasks         tasks[]
-
+  events        events[]
+  
   @@index([package_id], map: "FK")
   @@index([user_id], map: "USERBOOKING_FK")
 }
@@ -32,9 +31,9 @@ model package_packageitems {
   pack_id         Int           @id @default(autoincrement())
   package_id      String?       @db.VarChar(11)
   packageitems_id Int?
-  packages        packages?     @relation(fields: [package_id], references: [package_id], onDelete: Restrict, onUpdate: Restrict)
-  packageitems    packageitems? @relation(fields: [packageitems_id], references: [packageitem_id], onDelete: Restrict, onUpdate: Restrict)
-
+  packages        packages?     @relation(fields: [package_id], references: [package_id], onDelete: SetNull, onUpdate: Restrict)
+  packageitems    packageitems? @relation(fields: [packageitems_id], references: [packageitem_id], onDelete: SetNull, onUpdate: Restrict)
+  
   @@index([packageitems_id], map: "PACKAGEITEM_FK")
   @@index([package_id], map: "PACKAGE_FK")
   @@map("package-packageitems")
@@ -63,44 +62,44 @@ model packages {
 model payments {
   payment_id          Int       @id @default(autoincrement())
   booking_id          Int?
-  payment_status      String?   @db.VarChar(255)
-  payment_type        String?   @db.VarChar(255)
-  payment_balance     String?   @db.VarChar(255)
-  payment_amount      Int?
-  payment_receipt     String?   @db.VarChar(255)
-  payment_description String?   @db.VarChar(255)
+  payment_balance     Int?
+  payment_total       Int?
   created_at          DateTime? @default(now()) @db.Date
   updated_at          DateTime? @updatedAt
-  bookings            bookings? @relation(fields: [booking_id], references: [booking_id], onDelete: Restrict, onUpdate: Restrict)
-
+  bookings            bookings? @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: Restrict)
+  paymentdetails      paymentdetails[]
+  
   @@index([booking_id], map: "BOOKING_FK")
 }
 
-model taskassignments {
-  taskassignment_id          Int       @id @default(autoincrement())
-  task_id                    Int?
-  user_id                    String?   @db.VarChar(14)
-  taskassignment_role        String?   @db.VarChar(255)
-  taskassignment_description String?   @db.VarChar(255)
-  taskassignment_status      String?   @db.VarChar(255)
-  created_at                 DateTime? @default(now()) @db.Date
-  updated_at                 DateTime? @updatedAt
-  tasks                      tasks?    @relation(fields: [task_id], references: [task_id], onUpdate: SetNull)
-  users                      users?    @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+model tasks {
+  task_id          Int       @id @default(autoincrement())
+  task_role        String?   @db.VarChar(255)
+  task_status      String?   @db.VarChar(255)
+  task_description String?   @db.VarChar(255)
+  task_duedate     DateTime?
+  created_at       DateTime? @default(now()) @db.Date
+  updated_at       DateTime? @updatedAt
+  user_id          String?   @db.VarChar(14)
+  event_id         Int?
+  users            users?    @relation(fields: [user_id], references: [user_id], onDelete: SetNull, onUpdate: Restrict)
+  events           events?   @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
 
-  @@index([task_id], map: "TASK_FK")
   @@index([user_id], map: "USERTASK_FK")
+  @@index([event_id], map: "EVENTTASK_FK")
 }
 
-model tasks {
-  task_id         Int               @id @default(autoincrement())
+model events {
+  event_id        Int       @id @default(autoincrement())
+  event_type      String?   @db.VarChar(255)
+  event_status    String?   @db.VarChar(255)
+  event_date      DateTime? @db.Date
+  event_address   String?   @db.VarChar(255)
+  created_at      DateTime? @default(now()) @db.Date
+  updated_at      DateTime? @updatedAt
   booking_id      Int?
-  task_status     String?           @db.VarChar(255)
-  task_type       String?           @db.VarChar(255)
-  created_at      DateTime?         @default(now()) @db.Date
-  updated_at      DateTime?         @updatedAt
-  taskassignments taskassignments[]
-  bookings        bookings?         @relation(fields: [booking_id], references: [booking_id], onUpdate: SetNull)
+  bookings        bookings? @relation(fields: [booking_id], references: [booking_id],  onDelete: Cascade, onUpdate: Restrict)
+  tasks           tasks[]
 
   @@index([booking_id], map: "BOOKINGT_FK")
 }
@@ -108,16 +107,31 @@ model tasks {
 model users {
   user_id         String            @id @db.VarChar(14)
   user_fullname   String            @db.VarChar(255)
-  user_email      String            @db.VarChar(255)
+  user_email      String            @unique @db.VarChar(255)
   user_role       String            @db.VarChar(255)
   user_password   String            @db.VarChar(255)
   created_at      DateTime          @default(now()) @db.Date
   updated_at      DateTime?         @updatedAt
   created_by      String?           @db.VarChar(14)
   bookings        bookings[]
-  taskassignments taskassignments[]
+  tasks           tasks[]
   users           users?            @relation("usersTousers", fields: [created_by], references: [user_id], onUpdate: SetNull)
   other_users     users[]           @relation("usersTousers")
 
   @@index([created_by], map: "USERUSER_FK")
+}
+
+model paymentdetails {
+  paymentdetails_id         Int       @id @default(autoincrement())
+  paymentdetails_type       String    @db.VarChar(255)
+  paymentdetails_desc       String    @db.VarChar(255)
+  paymentdetails_status     String    @db.VarChar(255)
+  paymentdetails_amount     Int
+  payment_id                Int?      // Foreign key to payments table
+  created_at                DateTime  @default(now()) @db.Date
+  updated_at                DateTime? @updatedAt
+
+  payments                  payments? @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade, onUpdate: Restrict)
+  
+  @@index([payment_id], map: "PAYMENTDETAILS_PAYMENT_FK")
 }

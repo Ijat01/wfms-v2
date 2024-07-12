@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect } from "react";
+import { FilePenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -99,7 +100,7 @@ export function UpdateStaffDialog({ user }: UpdateStaffDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Edit</Button>
+        <Button><FilePenLine></FilePenLine></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>

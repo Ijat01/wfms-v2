@@ -1,7 +1,6 @@
 "use client"
-// Import React and necessary hooks/components
 import React, { useState, FormEvent } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 // Import UI components (assuming these are correctly implemented in "@/components/ui")
@@ -13,50 +12,83 @@ import { toast } from "@/components/ui/use-toast";
 
 // SignInPage component definition
 const Page = () => {
-  // State for email and password inputs
-  const [user_id, setUserId ] = useState("");
+  const [user_email, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission
 
     try {
-      // Attempt sign-in using NextAuth's signIn function
       const result = await signIn("credentials", {
-        user_id: user_id,
-        password: password, // Do not redirect, handle result locally
-      })
-    } catch(error){
+        user_email,
+        password,
+        redirect: false, // Do not redirect, handle result locally
+      });
 
+      if (result?.error) {
+        toast({
+          title: "Invalid email or password",
+          description: "Please enter correct email & password",
+          variant: "destructive",
+        });
+      } else if (result?.ok) {
+        toast({
+          title: "Success",
+          description: "Successfully signed in",
+          variant: "success",
+        });
+        router.push('/admin/dashboard');
+      } else {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
         description: "Something went wrong. Please try again later",
-        variant: "destructive"
+        variant: "destructive",
       });
-
-    } 
+    }
   };
 
-  // Render the sign-in form using UI components
   return (
     <main className="">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your Ic number and password below to login to your account.</CardDescription>
+          <CardDescription>Enter your Email and password below to login to your account.</CardDescription>
         </CardHeader>
-        <CardContent className="grid  gap-4">
+        <CardContent className="grid gap-4">
           <form onSubmit={handleSignIn}>
             <div className="grid gap-2">
-              <Label htmlFor="email">Ic Number</Label>
-              <Input id="user_id" type="" placeholder="" value={user_id} onChange={(e) => setUserId(e.target.value)} required />
+              <Label htmlFor="user_email">Email</Label>
+              <Input
+                id="user_email"
+                type="email"
+                placeholder="Enter your Email Address"
+                value={user_email}
+                onChange={(e) => setUserId(e.target.value)}
+                required
+              />
             </div>
             <div className="grid pt-5 gap-4">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
             <CardFooter className="pt-5">
-              <Button className="w-full" type="submit">Sign in</Button>
+              <Button className="w-full" type="submit">
+                Sign in
+              </Button>
             </CardFooter>
           </form>
         </CardContent>

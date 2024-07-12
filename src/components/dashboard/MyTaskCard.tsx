@@ -77,11 +77,15 @@ import {
   TooltipTrigger,
   TooltipProvider
 } from "@/components/ui/tooltip"
+import { getMytask } from "@/lib/data"
 
-export function MyTaskCard(){
+export async function MyTaskCard(){
+
+  const data = await getMytask()
+
   return (
     <div>
-        <Card className="md:max-h-[750px]" >
+        <Card className="md:max-h-[740px] " >
             <CardHeader className="flex flex-row items-start bg-muted/50">
                 <div className="grid gap-0.5">
                 <CardTitle className="group flex items-center gap-2 text-lg">
@@ -107,8 +111,81 @@ export function MyTaskCard(){
                 </div>
             </CardHeader>
         
-            <CardContent className=" overflow-y-auto p-2 text-sm">
-            </CardContent>     
+          <div className="md:max-h-[630px] overflow-y-hidden hover:overflow-y-auto">
+            <CardContent className="  p-2 text-sm">
+              
+          {data.map((taskassignment) =>( 
+            <Card key={taskassignment.task_id} className="mt-4">
+                        <CardHeader className="bg-gray-200 flex pt-4 pb-4 pr-2 h-4 justify-center text-xs rounded-t-[11px]">
+                          <div className="flex items-center">
+                            <div className="grow">
+                              {taskassignment.task_role}
+                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <MoreVertical className="size-4" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                                <DropdownMenuItem>Export</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </CardHeader>
+  
+                        <CardContent className="pb-1 pt-4 ">
+                          <div className="flex pb-4">
+                            <div className="my-auto  text-md font">
+                              <div className="pb-2 flex">
+                                <div>
+                                {taskassignment.event_type}
+                                </div>
+                                <div className="font-bold pl-1">
+                                {taskassignment.groom_name} & {taskassignment.bride_name}
+                                </div>
+                              </div>
+                              <div className="flex items-center pb-2">
+                              <div className="text-xs pr-2">
+                                Event Date:
+                              </div>
+                              <Badge variant="outline">{taskassignment.eventdate}</Badge>
+                              </div>
+                              <div className="flex items-center pb-2">
+                              <div className="text-xs pr-2">
+                                Event Address:
+                              </div>
+                              <Badge variant="outline">{taskassignment.eventaddress}</Badge>
+                              </div>
+                              <div className="flex items-center">
+                              <div className="text-xs pr-2">
+                                Due Date:
+                              </div>
+                              <Badge variant="outline">{taskassignment.duedate}</Badge>
+                              </div>
+                              
+                            </div>
+                          </div>
+  
+                          <div className="text-xs pb-1">
+                            Comment:
+                          </div>
+  
+                          <Card className="pl-2 pt-2 pb-2 text-sm rounded-sm">
+                            <div>
+                             {taskassignment.task_description} 
+                            </div>
+                          </Card>
+                        </CardContent>
+  
+                        <CardFooter className="flex justify-end gap-2 pt-2 pb-2">
+                          <Badge variant={taskassignment.task_status === 'Pending' ? 'destructive' : taskassignment.task_status === 'Complete' ? 'success' : 'default'} >{taskassignment.task_status}</Badge>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                    
+            </CardContent> 
+            </div>
+             
         </Card>
     </div>
   )

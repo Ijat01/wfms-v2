@@ -26,7 +26,7 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
     const data = await getEventDetailsBooking( searchParams.bookingid )
     const task = await getEventDetailsTask(searchParams.bookingid)
 
-    const taskid = task.map((task)=>(task.taskid))
+    const taskid = task.map((task)=>(task.eventid))
 
     console.log(searchParams.bookingid)
 
@@ -34,15 +34,17 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
             <Card>
                 <CardHeader className="pb-10">
-                <CardTitle>Task Details</CardTitle>
-                
+                <CardTitle>Booking Details</CardTitle>
+                <CardDescription>
+                    This show the customer booking details and list of events
+                </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                     <Card>
                         <CardHeader className="pb-5">
-                        <CardTitle>Event Details</CardTitle>
+                        <CardTitle>Customer Details</CardTitle>
                         <CardDescription>
-                            Customer Event Details
+                            Customer booking details
                         </CardDescription>
                         </CardHeader>
 
@@ -65,15 +67,15 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
                         </div>
                         <div className="flex">
                             <div className="text-sm w-36">
-                                Event Date: 
+                                Contact No: 
                             </div>
-                            <Badge variant="outline">{booking.event_date}</Badge>
+                            <Badge variant="outline">{booking.contactno}</Badge>
                         </div>
                         <div className="flex">
                             <div className="text-sm w-36">
-                                Event Location: 
+                                Package: 
                             </div>
-                            <Badge variant="outline">{booking.event_address}</Badge>
+                            <Badge variant="outline">{booking.packagename}</Badge>
                         </div>
                         </div>
                     ))}
@@ -83,24 +85,27 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
                     </Card>
                     <Card>
                     <CardHeader className="pb-5">
-                        <CardTitle>Task List</CardTitle>
+                        <CardTitle>Event List</CardTitle>
                         <CardDescription>
-                            Task for this event
+                            List of event for this booking
                         </CardDescription>
                         </CardHeader>
                         <CardContent>
                     {task.map((task) => (
 
                         
-                        <Accordion key={task.taskid} type="single" collapsible className="w-full">
+                        <Accordion key={task.eventid} type="single" collapsible className="w-full">
                         <AccordionItem value="item-1">
                             <AccordionTrigger>
 
                             <div className="text-start flex">
                                 <div className="w-40">
-                                {task.tasktype}
+                                {task.eventtype}
                                 </div>
-                              <Badge>{task.taskstatus}</Badge>  
+                                <div className="w-40">
+                                <Badge variant="outline">{task.eventdate}</Badge>
+                                </div>  
+                              <Badge >{task.eventstatus}</Badge>  
                              
                             </div> 
 
@@ -126,7 +131,7 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
                                 
                             {task.assignments.map((assignment) => (
 
-                                <TableRow key={assignment.taskassignmentid}>
+                                <TableRow key={assignment.taskid}>
 
                                     <TableCell className=" flex items-center font-medium">
                           
@@ -140,11 +145,11 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
                                     </div>
                                     </TableCell>  
                                     <TableCell>
-                                    {assignment.taskassignment_role}
+                                    {assignment.task_role}
                                     </TableCell>
                                     
                                     <TableCell>
-                                        <Badge variant={assignment.taskassignment_status === 'In Progress' ? 'default' : assignment.taskassignment_status === 'Complete' ? 'success' : 'destructive'}>{assignment.taskassignment_status}</Badge>
+                                        <Badge variant={assignment.task_status === 'In Progress' ? 'default' : assignment.task_status === 'Complete' ? 'success' : 'destructive'}>{assignment.task_status}</Badge>
                                     </TableCell> 
                                 </TableRow>
                             ))}

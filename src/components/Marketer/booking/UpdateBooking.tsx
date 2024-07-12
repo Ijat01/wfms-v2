@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { FilePenLine } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -33,8 +34,6 @@ const UpdateBookingSchema = z.object({
   groomname: z.string(),
   bridename: z.string(),
   bookingdate: z.string().optional(),
-  eventdate: z.string(),
-  eventaddress: z.string(),
   contact: z.string(),
   package_id: z.string().optional(),
   packagename: z.string().optional(),
@@ -95,8 +94,6 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
       setValue("booking_id", booking.booking_id);
       setValue("groomname", booking.groomname);
       setValue("bridename", booking.bridename);
-      setValue("eventdate", booking.eventdate);
-      setValue("eventaddress", booking.eventaddress);
       setValue("contact", booking.contact);
       setValue("packagename", booking.packagename);
     }
@@ -141,7 +138,7 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Edit</Button>
+        <Button><FilePenLine></FilePenLine></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
@@ -165,11 +162,6 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
             <Label htmlFor="bridename">Bride Name</Label>
             <Input id="bridename" {...register("bridename")} />
             {errors.bridename && <p>{errors.bridename.message as string}</p>}
-          </div>
-          <div className="pt-4">
-            <Label htmlFor="eventdate">Event Date</Label>
-            <Input id="eventdate" type="date" {...register("eventdate")} />
-            {errors.eventdate && <p>{errors.eventdate.message as string}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="packageid">Package</Label>
@@ -197,11 +189,7 @@ export function UpdateBookingDialog({ booking }: UpdateBookingDialogProps) {
               </Select>
             )}
           </div>
-          <div className="pt-4">
-            <Label htmlFor="eventaddress">Event Address</Label>
-            <Input id="eventaddress" {...register("eventaddress")} />
-            {errors.eventaddress && <p>{errors.eventaddress.message as string}</p>}
-          </div>
+
           <div className="pt-4">
             <Label htmlFor="contact">Contact</Label>
             <Input id="contact" {...register("contact")} />

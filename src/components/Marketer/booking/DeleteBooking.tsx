@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Trash2 } from "lucide-react";
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from '@/components/ui/use-toast';
@@ -72,7 +73,7 @@ export function DeleteBookingDialog({ booking }: DeleteBookingDialogProps) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" onClick={openDialog}>
-          Delete
+          <Trash2></Trash2>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

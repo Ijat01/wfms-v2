@@ -23,7 +23,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import { UpdateStaffDialog } from "@/components/staff/UpdateStaffDialog"
-import { DeleteStaffDialog } from "./DeleteStaffDialog"
+import { DeleteStaffDialog } from "@/components/staff/DeleteStaffDialog"
 import { getAllUser } from "@/lib/data"
 
 
@@ -94,4 +94,3 @@ export async function CurrentStaffTable(){
   )
 }
 
-export default CurrentStaffTable

@@ -1,11 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
+import { Eye } from "lucide-react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -20,38 +17,23 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { DeleteBookingDialog } from "./DeleteBooking";
-import { UpdateBookingDialog } from "./UpdateBooking";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Booking } from "@/types/types";
-import { AddBookingDialog } from "./AddBooking";
+import { AddBookingDialog } from "@/components/Marketer/booking/AddBooking";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
+import { DeleteBookingDialog } from "@/components/Marketer/booking/DeleteBooking";
+import { UpdateBookingDialog } from "@/components/Marketer/booking/UpdateBooking";
+import { formatDate } from "@/lib/formateDate";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 
 interface BookingListProps {
-  bookings: Booking[];
+  bookings: any[];
+  events: any[];
 }
 
-export function BookingList({ bookings }: BookingListProps) {
-
+export function BookingList({ bookings, events }: BookingListProps) {
   // Define columns for the booking table
   const columns: ColumnDef<typeof bookings[0]>[] = [
     {
@@ -60,24 +42,21 @@ export function BookingList({ bookings }: BookingListProps) {
     },
     {
       accessorKey: "customername",
-      header: ({ column }) => { return (
+      header: ({ column }) => (
         <div className="text-center">
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Customer
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Customer
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
         </div>
-      )
-      },
+      ),
       cell: ({ row }) => (
-      <div className="text-center">
-        <Badge variant="outline">
-          {row.getValue("customername")}
-        </Badge>
-      </div>
+        <div className="text-center">
+          <Badge variant="outline">{row.getValue("customername")}</Badge>
+        </div>
       ),
     },
     {
@@ -86,24 +65,27 @@ export function BookingList({ bookings }: BookingListProps) {
       cell: ({ row }) => <Badge variant="outline">{row.getValue("contact")}</Badge>,
     },
     {
-      accessorKey: "eventaddress",
-      header: "Location",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("eventaddress")}</Badge>,
-    },
-    {
-      accessorKey: "eventdate",
-      header: "Event Date",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("eventdate")}</Badge>,
+      accessorKey: "bookingdate",
+      header: "Booking Date",
+      cell: ({ row }) => (
+        <div className="">
+          <Badge variant="outline">{row.getValue("bookingdate")}</Badge>
+        </div>
+      ),
     },
     {
       accessorKey: "packagename",
-      header:"Package",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("packagename")}</Badge>,
+      header: "Package",
+      cell: ({ row }) => (
+        <div className="   ">
+          <Badge variant="outline">{row.getValue("packagename")}</Badge>
+        </div>
+      ),
     },
     {
-      accessorKey: "bookingdate",
-      header: "Booking Date",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("bookingdate")}</Badge>,
+      accessorKey: "handleby",
+      header: "Handle by",
+      cell: ({ row }) => <Badge variant="outline">{row.getValue("handleby")}</Badge>,
     },
     {
       id: "actions",
@@ -117,10 +99,20 @@ export function BookingList({ bookings }: BookingListProps) {
     },
   ];
 
+  function readdate(date: string): string | undefined {
+  const parts = date.split('/');
+  if (parts.length >= 2) {
+    return parts[1]; // Return the middle part (index 1) after splitting by '/'
+  } else {
+    return undefined; // Handle cases where the date format might be incorrect
+  }
+}
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [filterBy, setFilterBy] = React.useState('customername');
 
   const table = useReactTable({
     data: bookings,
@@ -151,43 +143,64 @@ export function BookingList({ bookings }: BookingListProps) {
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="pb-2">
           <CardTitle>Booking</CardTitle>
-          <CardDescription>Manage customers booking</CardDescription>
+          <CardDescription>Manage all customer booking</CardDescription>
         </CardHeader>
         <CardContent>
-              <div className="flex items-center py-4">
-              <div className="grow">
-              <Input
+          <div className="flex items-center py-4">
+            <div className="w-96 pr-5">
+            <Input
               placeholder="Filter customers..."
-              value={(table.getColumn("customername")?.getFilterValue() as string) ?? ""}
+              value={(table.getColumn(filterBy) ? table.getColumn(filterBy)?.getFilterValue() as string : '') ?? ""}
               onChange={(event) =>
-                table.getColumn("customername")?.setFilterValue(event.target.value)
+                table.getColumn(filterBy) && table.getColumn(filterBy)?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
-            />
-              </div>
+              />
+            </div>
+            <div className="pr-5">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-auto">
+                    Filter by column <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuRadioGroup value={filterBy} onValueChange={setFilterBy}>
+                    <DropdownMenuRadioItem value="handleby">Handle By</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="packagename">Package</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="bookingdate">Booking Date</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="customername">Customer</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="booking_id">ID</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="contact">contact</DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="grow">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-auto">
+                    Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {table.getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <div className="space-x-2">
-            <DropdownMenu >
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table.getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <AddBookingDialog/>
+              <AddBookingDialog />
             </div>
           </div>
           <div className="rounded-md border">
@@ -208,13 +221,43 @@ export function BookingList({ bookings }: BookingListProps) {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+                    <Collapsible key={row.id} asChild>
+                      <>
+                        <CollapsibleTrigger asChild>
+                          <TableRow data-state={row.getIsSelected() && "selected"}>
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent asChild>
+                          <TableRow className="bg-gray-100">
+                            <TableCell colSpan={8}>
+                            <Table>
+                              <TableHeader className="text-xs">
+                                <TableHead className="w-32">Event Type</TableHead>
+                                <TableHead className="w-32 ">Event Date</TableHead>
+                                <TableHead className="w-32 ">Event Address</TableHead>
+                                <TableHead className="w-32 "> Status</TableHead>
+                              </TableHeader>
+                              <TableBody>
+                              {events.filter(t => t.bookingid == row.original.booking_id).map(events => (
+                              <TableRow key={events.event_id}>
+                                <TableCell><Badge variant="outline">{events.event_type}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{formatDate(events.event_date)}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{events.event_address}</Badge></TableCell>
+                                <TableCell><Badge variant={events.event_status === 'No Task Assigned' ? 'destructive' : events.event_status === 'Completed' ? 'success' : 'default'}>{events.event_status}</Badge></TableCell>
+                              </TableRow>
+                              ))}
+                              </TableBody>
+                            </Table>
+                            </TableCell>
+                          </TableRow>
+                        </CollapsibleContent>
+                      </>
+                    </Collapsible>
                   ))
                 ) : (
                   <TableRow>
@@ -233,30 +276,25 @@ export function BookingList({ bookings }: BookingListProps) {
             <strong>{table.getPageCount()}</strong> pages
           </div>
           <div className="space-x-2">
-          
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
           </div>
         </CardFooter>
       </Card>
     </div>
   );
 }
-
-
-

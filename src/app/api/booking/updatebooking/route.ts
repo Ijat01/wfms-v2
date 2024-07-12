@@ -10,8 +10,6 @@ const UpdateBookingSchema = z.object({
     groomname: z.string(),
     bridename: z.string(),
     bookingdate: z.string().optional(),
-    eventdate: z.string(),
-    eventaddress: z.string(),
     contact: z.string(),
     package_id: z.string().optional(),
     package_name: z.string().optional(),
@@ -26,8 +24,6 @@ export async function PATCH(req: Request) {
       groomname,
       bridename,
       bookingdate,
-      eventdate,
-      eventaddress,
       contact,
       package_id,
     } = UpdateBookingSchema.parse(body);
@@ -40,7 +36,6 @@ export async function PATCH(req: Request) {
 
     console.log('Session ID:', session.user.id);
 
-    const neweventdate = new Date(eventdate).toISOString();
     const newbookingid = +booking_id;
     // Update the booking record in the database
     const updatedBooking = await db.bookings.update({
@@ -49,8 +44,6 @@ export async function PATCH(req: Request) {
         groom_name: groomname,
         bride_name: bridename,
         updated_at: bookingdate,
-        event_date: neweventdate,
-        event_address: eventaddress,
         contact_no: contact,
         package_id: package_id,
       },

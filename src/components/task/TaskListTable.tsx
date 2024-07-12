@@ -37,13 +37,15 @@ import { AddBookingDialog } from "../Marketer/booking/AddBooking";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import Link from "next/link";
+import { DeleteBookingDialog } from "../Marketer/booking/DeleteBooking";
+import { UpdateBookingDialog } from "../Marketer/booking/UpdateBooking";
 
 interface BookingListProps {
   bookings: any[];
-  task: any[];
+  events: any[];
 }
 
-export function BookingList({ bookings, task }: BookingListProps) {
+export function BookingList({ bookings, events }: BookingListProps) {
 
   // Define columns for the booking table
   const columns: ColumnDef<typeof bookings[0]>[] = [
@@ -78,19 +80,9 @@ export function BookingList({ bookings, task }: BookingListProps) {
       cell: ({ row }) => <Badge variant="outline">{row.getValue("contact")}</Badge>,
     },
     {
-      accessorKey: "eventaddress",
-      header: "Location",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("eventaddress")}</Badge>,
-    },
-    {
       accessorKey: "packagename",
       header:"Package",
       cell: ({ row }) => <Badge variant="outline">{row.getValue("packagename")}</Badge>,
-    },
-    {
-      accessorKey: "eventdate",
-      header: "Event Date",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("eventdate")}</Badge>,
     },
     {
       id: "actions",
@@ -142,8 +134,8 @@ export function BookingList({ bookings, task }: BookingListProps) {
     <div className="w-full">
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="pb-2">
-          <CardTitle>Task</CardTitle>
-          <CardDescription>Manage your task</CardDescription>
+          <CardTitle>Events</CardTitle>
+          <CardDescription>Manage customer events</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center py-4">
@@ -216,15 +208,18 @@ export function BookingList({ bookings, task }: BookingListProps) {
                             <TableCell colSpan={8}>
                             <Table>
                               <TableHeader className="text-xs">
-                                <TableHead className="w-[400px]">Event Type</TableHead>
-                                <TableHead> Status</TableHead>
+                                <TableHead className="w-32">Event Type</TableHead>
+                                <TableHead className="w-32 ">Event Date</TableHead>
+                                <TableHead className="w-32 ">Event Address</TableHead>
+                                <TableHead className="w-32 "> Status</TableHead>
                               </TableHeader>
                               <TableBody>
-                              {task.filter(t => t.bookingid == row.original.booking_id).map(task => (
-                              <TableRow key={task.taskid}>
-
-                                <TableCell><Badge variant="outline">{task.task_type}</Badge></TableCell>
-                                <TableCell><Badge variant={task.taskstatus === 'Pending' ? 'destructive' : task.taskstatus === 'Completed' ? 'success' : 'default'}>{task.taskstatus}</Badge></TableCell>
+                              {events.filter(t => t.bookingid == row.original.booking_id).map(events => (
+                              <TableRow key={events.event_id}>
+                                <TableCell><Badge variant="outline">{events.event_type}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{events.event_date}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{events.event_address}</Badge></TableCell>
+                                <TableCell><Badge variant={events.event_status === 'Pending' ? 'destructive' : events.event_status === 'Completed' ? 'success' : 'default'}>{events.event_status}</Badge></TableCell>
                               </TableRow>
                               ))}
                               </TableBody>

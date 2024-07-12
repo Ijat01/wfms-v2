@@ -38,7 +38,7 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
   
             <CardContent className="flex-col overflow-y-auto h-[520px]">
               {tasks.map((taskassignment, index) => (
-                <Draggable key={taskassignment.taskassignment_id} draggableId={taskassignment.taskassignment_id} index={index}>
+                <Draggable key={taskassignment.task_id} draggableId={taskassignment.task_id} index={index}>
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
@@ -53,7 +53,7 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
                         <CardHeader className="bg-gray-200 flex pt-4 pb-4 pr-2 h-4 justify-center text-xs rounded-t-[11px]">
                           <div className="flex items-center">
                             <div className="grow">
-                              {taskassignment.taskassignment_role}
+                              {taskassignment.task_role}
                             </div>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -89,12 +89,12 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
                           </div>
   
                           <Card className="pl-2 pt-2 pb-2 text-sm rounded-sm">
-                            {taskassignment.taskassignment_description}
+                            {taskassignment.task_description}
                           </Card>
                         </CardContent>
   
                         <CardFooter className="flex justify-end gap-2 pt-2 pb-2">
-                          <Badge variant={taskassignment.taskassignment_status === 'Pending' ? 'destructive' : taskassignment.taskassignment_status === 'Complete' ? 'success' : 'default'} >{taskassignment.taskassignment_status}</Badge>
+                          <Badge variant={taskassignment.task_status === 'Pending' ? 'destructive' : taskassignment.task_status === 'Complete' ? 'success' : 'default'} >{taskassignment.task_status}</Badge>
                         </CardFooter>
                       </Card>
                     </div>

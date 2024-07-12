@@ -30,7 +30,7 @@ const Board: React.FC<{ board: Task[] }> = ({ board }) => {
         ) return;
 
         const draggedTask = tasks.find(
-            (task) => task.taskassignment_id === draggableId
+            (task) => task.task_id === draggableId
         );
 
         if (!draggedTask) return;
@@ -48,12 +48,12 @@ const Board: React.FC<{ board: Task[] }> = ({ board }) => {
                 updatedStatus = "Complete";
                 break;
             default:
-                updatedStatus = draggedTask.taskassignment_status;
+                updatedStatus = draggedTask.task_status;
         }
 
         const updatedTasks = tasks.map((task) =>
-            task.taskassignment_id === draggableId
-                ? { ...task, taskassignment_status: updatedStatus }
+            task.task_id === draggableId
+                ? { ...task, task_status: updatedStatus }
                 : task
         );
 
@@ -61,8 +61,8 @@ const Board: React.FC<{ board: Task[] }> = ({ board }) => {
 
         try {
             await axios.patch(`/api/task/updatetaskstatus`, {
-                taskassignment_id: draggableId,
-                taskassignment_status: updatedStatus,
+                task_id: draggableId,
+                task_status: updatedStatus,
             });
         } catch (error) {
             console.error("Failed to update task status", error);
@@ -83,21 +83,21 @@ const Board: React.FC<{ board: Task[] }> = ({ board }) => {
                     <Column
                         title="Pending"
                         tasks={tasks.filter(
-                            (task) => task.taskassignment_status === "Pending"
+                            (task) => task.task_status === "Pending"
                         )}
                         droppableId="Pending"
                     />
                     <Column
                         title="In Progress"
                         tasks={tasks.filter(
-                            (task) => task.taskassignment_status === "In Progress"
+                            (task) => task.task_status === "In Progress"
                         )}
                         droppableId="In Progress"
                     />
                     <Column
                         title="Completed"
                         tasks={tasks.filter(
-                            (task) => task.taskassignment_status === "Complete"
+                            (task) => task.task_status === "Complete"
                         )}
                         droppableId="Completed"
                     />

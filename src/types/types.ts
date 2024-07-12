@@ -1,19 +1,19 @@
 export interface Task {
-  taskassignment_id: string; 
-  user_name: string | undefined; 
-  user_role: string | undefined; 
-  taskassignment_role: string | null; 
-  taskassignment_status: string | null; 
-  taskassignment_description: string | null; 
+  task_id: string;
+  user_name: string | undefined;
+  user_role: string | undefined;
+  task_role: string | null;
+  task_status: string | null;
+  task_description: string | null;
 }
   
   export interface BoardTypes {
-    taskassignment_id: string;
+    task_id: string;
     user_name: string | undefined;
     user_role: string | undefined; 
-    taskassignment_role: string | null; 
-    taskassignment_status: string | null; 
-    taskassignment_description: string | null; 
+    task_role: string | null; 
+    task_status: string | null; 
+    task_description: string | null; 
   }
 
 export interface Booking {
@@ -40,4 +40,19 @@ export interface TaskList {
     bride_name: string | undefined;
     groom_name: string | undefined;
     task_type: string | null
+}
+
+export interface MyTask {
+  task_id: string;
+  user_name: string | undefined;
+  user_role: string | undefined;
+  task_role: string | null;
+  task_status: string | null;
+  task_description: string | null;
+  duedate: string | undefined;
+  eventdate: string | undefined;
+  eventaddress: string | null | undefined;
+  event_type: string | null | undefined;
+  groom_name: string | undefined;
+  bride_name: string | undefined;
 }
