@@ -3,9 +3,7 @@ import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { BookingList } from '@/components/Marketer/booking/bookinglist'
 import { getBookingList, getBookingTaskDataAll } from '@/lib/data'
-
-
-
+import Loading from './loading'
 
 
 const page = async () => {
@@ -22,7 +20,7 @@ const page = async () => {
 
             </div>
             <TabsContent value="all">
-            <Suspense>
+            <Suspense fallback={<Loading/>}>
             <BookingList bookings={booking} events={events} />
             </Suspense >
             </TabsContent>
