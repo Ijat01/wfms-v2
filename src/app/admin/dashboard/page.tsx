@@ -1,7 +1,6 @@
-
+import React, { Suspense } from 'react'
 import { DashboardTable } from '@/components/dashboard/DashboardTable'
 import { DashboardAlertCard } from '@/components/dashboard/DashboardAlertCard'
-import React, { Suspense } from 'react'
 import MyTaskCard from '@/components/dashboard/MyTaskCard'
 import Loading from './loading'
 
