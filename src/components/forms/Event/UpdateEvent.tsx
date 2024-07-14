@@ -52,10 +52,14 @@ export function UpdateEventDialog({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<EventSchemaType>({
     resolver: zodResolver(EventSchema),
   });
+  
+
+  
 
   useEffect(() => {
     if (isOpen) {
@@ -133,10 +137,11 @@ export function UpdateEventDialog({
             <Label htmlFor="event_type">Event Type</Label>
             <Select
               {...register("event_type")}
+              defaultValue={watch("event_type")} 
               onValueChange={(value) => setValue("event_type", value)}
             >
-              <SelectTrigger id="event_type" className="w-[180px]">
-                <SelectValue placeholder="Select an event" />
+              <SelectTrigger  className="w-[180px]">
+                <SelectValue defaultValue="event_type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Nikah">Nikah</SelectItem>

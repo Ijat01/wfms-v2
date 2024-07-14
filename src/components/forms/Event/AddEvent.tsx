@@ -102,13 +102,13 @@ export function AddEvent( { bookingid }: AddEventProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>Payment Details</DialogTitle>
+          <DialogTitle>Add Event</DialogTitle>
           <DialogDescription>
             Fill in the details below.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="">
+          <div className="hidden">
             <Label htmlFor="bookingid">Booking ID</Label>
             <Input id="bookingid" {...register("bookingid")} />
             {errors.bookingid && <p>{errors.bookingid.message}</p>}

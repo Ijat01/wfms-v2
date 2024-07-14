@@ -169,7 +169,7 @@ export async function getEventDetailsTask(booking_id: string ) {
   });
 
   const groupedResult = result.map((events) => ({
-      eventid: events.event_id,
+      eventid: events.event_id.toString(),
       eventtype: events.event_type,
       eventstatus: events.event_status,
       eventdate: events.event_date?.toLocaleDateString(),
@@ -370,5 +370,56 @@ export async function countComplete() {
   return result;
 }
 
+export async function getTaskList() {
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+  
+
+  const result = await db.tasks.findMany({
+    include:{
+      users:{
+        select:{
+          user_fullname: true,
+          user_role:true
+        }
+      }
+    },
+  }
+  )
+
+  return result.map((task) => ({
+
+    event_id:task.event_id?.toString(),
+    task_id: task.task_id.toLocaleString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description:task.task_description,
+
+  }))
+  
+};
+
+export async function getEventList() {
+  const result = await db.events.findMany({
+   include:{
+    bookings: true,
+   }
+  });
+
+  return result.map((events) => ({
+    bookingid: events?.booking_id?.toLocaleString(),
+    event_title:events.bookings ? `${ events.event_type} of ${ events.bookings?.groom_name} & ${ events.bookings?.bride_name}`.toLocaleUpperCase() : 'Unknown',
+    event_id:events.event_id.toString(), 
+    event_date: events?.event_date, // Access event_date from the events relation
+    event_address: events?.event_address, // Access event_address from the events relation
+    event_type: events?.event_type,
+    event_status: events?.event_status
+  }));
+}
   
   

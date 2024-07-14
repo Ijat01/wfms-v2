@@ -2,7 +2,6 @@ import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import Board from '@/components/mytask/Board'
 import { getMytask } from '@/lib/data'
-import { BookingList } from '@/components/task/TaskListTable'
 import Loading from './loading'
 
 

@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
+import Image from "next/image";
 
 // SignInPage component definition
 const Page = () => {
@@ -59,6 +60,7 @@ const Page = () => {
     <main className="">
       <Card className="w-full max-w-sm">
         <CardHeader>
+          <Image className="mx-auto" width="70" height="70" src="/PWMS.png" alt=""/>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>Enter your Email and password below to login to your account.</CardDescription>
         </CardHeader>
