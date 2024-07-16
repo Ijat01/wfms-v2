@@ -6,7 +6,7 @@ import { BookingSchema, BookingSchemaType } from '@/lib/validators/booking';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { lock_by, packageid, groomname, bridename, eventaddress, contactno, eventdate, payment_total, paymentdetail_amount, paymentdetails_type, paymentdetails_desc, confirmProceed } = BookingSchema.parse(body) as BookingSchemaType;
+    const { lock_by, packageid, groomname, bridename, eventaddress, contactno, eventdate, payment_total, paymentdetail_amount, paymentdetails_type, paymentdetails_desc, confirmProceed, eventtime } = BookingSchema.parse(body) as BookingSchemaType;
 
     // Ensure the user is authenticated
     const session = await getAuthSession();
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
           event_date: formattedDate,
           event_address: eventaddress,
           booking_id: newBooking.booking_id,
-         
+          event_time: eventtime,  
         },
       });
     };

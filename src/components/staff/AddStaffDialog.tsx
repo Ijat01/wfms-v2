@@ -70,7 +70,7 @@ export function AddStaffDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="h-7 gap-1" variant="default">
+        <Button >
           Add New Staff
         </Button>
       </DialogTrigger>
@@ -83,7 +83,7 @@ export function AddStaffDialog() {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="pt-4">
-            <Label htmlFor="icno">IC Number</Label>
+            <Label htmlFor="icno">Username</Label>
             <Input id="icno" {...register("icno")} />
             {errors.icno && <p className="text-red-400 text-sm">{errors.icno.message}</p>}
           </div>

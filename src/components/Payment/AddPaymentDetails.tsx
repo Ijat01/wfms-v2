@@ -103,7 +103,7 @@ export function AddPaymentDetails( { paymentid, paymentbalance }: AddPaymentDeta
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="">
+          <div className="hidden ">
             <Label htmlFor="payment_id">Payment Id</Label>
             <Input id="payment_id" {...register("payment_id")} />
             {errors.payment_id && <p>{errors.payment_id.message}</p>}

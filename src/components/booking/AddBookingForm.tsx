@@ -141,6 +141,11 @@ export function AddBookingForm() {
                 {errors.bridename && <p>{errors.bridename.message}</p>}
               </div>
               <div className="pt-4">
+                <Label htmlFor="eventtime">Event Time</Label>
+                <Input id="eventtime" type="time" {...register("eventtime")} />
+                {errors.eventdate && <p>{errors.eventdate.message}</p>}
+              </div>
+              <div className="pt-4">
                 <Label htmlFor="eventdate">Event Date</Label>
                 <Input id="eventdate" type="date" {...register("eventdate")} />
                 {errors.eventdate && <p>{errors.eventdate.message}</p>}

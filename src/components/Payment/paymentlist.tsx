@@ -33,15 +33,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddBookingDialog } from "@/components/Marketer/booking/AddBooking";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { DeleteBookingDialog } from "@/components/Marketer/booking/DeleteBooking";
-import { UpdateBookingDialog } from "@/components/Marketer/booking/UpdateBooking";
-import { AddPaymentDetails } from "@/components/forms/Payment/AddPaymentDetails";
-import { UpdatePaymentDialog } from "@/components/forms/Payment/UpdatePaymentDetails";
-import { DeletePaymentDetailsDialog } from "@/components/forms/Payment/DeletePaymentDetails";
+import { AddPaymentDetails } from "@/components/Payment/AddPaymentDetails";
+import { UpdatePaymentDialog } from "@/components/Payment/UpdatePaymentDetails";
+import { DeletePaymentDetailsDialog } from "@/components/Payment/DeletePaymentDetails";
 
 interface BookingListProps {
   payments: any[];

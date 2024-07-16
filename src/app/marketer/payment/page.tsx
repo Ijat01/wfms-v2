@@ -1,9 +1,8 @@
 
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { PaymentList } from '@/components/Marketer/payment/paymentlist'
-import { getBookingTaskDataAll, getPaymentDataAll, getPaymentList } from '@/lib/data'
+import { PaymentList } from '@/components/Payment/paymentlist'
+import { getPaymentDataAll, getPaymentList } from '@/lib/data'
 import Loading from './loading'
 
 

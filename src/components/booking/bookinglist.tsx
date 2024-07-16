@@ -21,10 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddBookingDialog } from "@/components/Marketer/booking/AddBooking";
+import { AddBookingDialog } from "./AddBooking";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
-import { DeleteBookingDialog } from "@/components/Marketer/booking/DeleteBooking";
-import { UpdateBookingDialog } from "@/components/Marketer/booking/UpdateBooking";
+import { DeleteBookingDialog } from "./DeleteBooking";
+import { UpdateBookingDialog } from "./UpdateBooking";
 import { formatDate } from "@/lib/formateDate";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 
@@ -73,6 +73,7 @@ export function BookingList({ bookings, events }: BookingListProps) {
         </div>
       ),
     },
+  
     {
       accessorKey: "packagename",
       header: "Package",
@@ -239,6 +240,7 @@ export function BookingList({ bookings, events }: BookingListProps) {
                               <TableHeader className="text-xs">
                                 <TableHead className="w-32">Event Type</TableHead>
                                 <TableHead className="w-32 ">Event Date</TableHead>
+                                <TableHead className="w-32 ">Event Time</TableHead>
                                 <TableHead className="w-32 ">Event Address</TableHead>
                                 <TableHead className="w-32 "> Status</TableHead>
                               </TableHeader>
@@ -247,6 +249,7 @@ export function BookingList({ bookings, events }: BookingListProps) {
                               <TableRow key={events.event_id}>
                                 <TableCell><Badge variant="outline">{events.event_type}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{formatDate(events.event_date)}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{events.eventtime}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{events.event_address}</Badge></TableCell>
                                 <TableCell><Badge variant={events.event_status === 'No Task Assigned' ? 'destructive' : events.event_status === 'Completed' ? 'success' : 'default'}>{events.event_status}</Badge></TableCell>
                               </TableRow>

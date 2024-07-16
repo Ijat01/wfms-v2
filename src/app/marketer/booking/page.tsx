@@ -1,21 +1,8 @@
 
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import {
-  ListFilter,
-} from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { BookingList } from '@/components/Marketer/booking/bookinglist'
+import { BookingList } from '@/components/booking/bookinglist'
 import Loading from './loading'
-import { AddBookingDialog } from '@/components/Marketer/booking/AddBooking'
 import { getBookingList, getBookingTaskDataAll } from '@/lib/data'
 
 

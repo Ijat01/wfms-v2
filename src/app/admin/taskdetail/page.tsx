@@ -20,7 +20,7 @@ import { getEventDetailsBooking, getEventDetailsTask, getEventDetailsTaskAssignm
 import { any } from "zod";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AddTask } from "@/components/forms/Task/AddTask";
+import { AddTask } from "@/components/task/AddTask";
 import { TaskCard } from "@/components/taskdetail/taskdetails";
 
 const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {

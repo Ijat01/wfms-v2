@@ -13,7 +13,8 @@ export async function getBookingTaskDataAll() {
     bookingid: events?.booking_id,
     event_id: events.event_id.toString(),
     event_date: events?.event_date, // Access event_date from the events relation
-    event_address: events?.event_address, // Access event_address from the events relation
+    event_address: events?.event_address,
+    eventtime: events.event_time, // Access event_address from the events relation
     event_type: events?.event_type,
     event_status: events?.event_status
   }));
@@ -396,6 +397,7 @@ export async function getTaskList() {
     task_id: task.task_id.toLocaleString(),
     user_name: task.users?.user_fullname,
     user_role: task.users?.user_role,
+    task_due: task.task_duedate?.toDateString(),
     task_role: task.task_role,
     task_status: task.task_status,
     task_description:task.task_description,
@@ -415,11 +417,51 @@ export async function getEventList() {
     bookingid: events?.booking_id?.toLocaleString(),
     event_title:events.bookings ? `${ events.event_type} of ${ events.bookings?.groom_name} & ${ events.bookings?.bride_name}`.toLocaleUpperCase() : 'Unknown',
     event_id:events.event_id.toString(), 
+    event_time:events.event_time,
     event_date: events?.event_date, // Access event_date from the events relation
     event_address: events?.event_address, // Access event_address from the events relation
     event_type: events?.event_type,
     event_status: events?.event_status
   }));
 }
+
+export async function getAllTaskUsers(){
+
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const result = await db.tasks.findMany({
+    where:{
+      user_id:session.user.id,
+      task_status:"In Progress"
+    },
+    include: {
+      users: true,
+      events: {
+        include: {
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  return result.map((task) => ({
+    task_id: task.task_id.toString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description: task.task_description,
+    duedate: task.task_duedate?.toLocaleDateString(),
+    eventdate: task.events?.event_date,
+    eventdate_string: task.events?.event_date?.toLocaleDateString(),
+    eventaddress: task.events?.event_address,
+    event_type: task.events?.event_type?.toLocaleUpperCase(),
+    groom_name: task.events?.bookings?.groom_name,
+    bride_name: task.events?.bookings?.bride_name,
+  }));
   
-  
+} 

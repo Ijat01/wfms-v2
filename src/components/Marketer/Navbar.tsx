@@ -11,6 +11,7 @@ import {
   CalendarDays,
   Banknote,
   LogOut,
+  Theater,
 } from "lucide-react"
 import {
   Tooltip,
@@ -60,6 +61,18 @@ export function Navbar()  {
                 className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/booking")} transition-colors hover:text-foreground md:h-8 md:w-8`}
               >
                 <NotebookPen className="h-5 w-5" />
+                <span className="sr-only">Booking</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Booking</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/marketer/event"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${isActive("/marketer/event")} transition-colors hover:text-foreground md:h-8 md:w-8`}
+              >
+                <Theater className="h-5 w-5" />
                 <span className="sr-only">Booking</span>
               </Link>
             </TooltipTrigger>

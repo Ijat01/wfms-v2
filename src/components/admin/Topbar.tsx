@@ -25,8 +25,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { getAuthSession } from "@/lib/auth"
-import { get } from "http"
-import { Card, CardContent } from "./ui/card"
+
 
 
 export async function TopBar(){

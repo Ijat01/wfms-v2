@@ -36,10 +36,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { AddTask } from "../forms/Task/AddTask";
-import { UpdateTask } from "../forms/Task/UpdateTask";
+import { AddTask } from "../task/AddTask";
+import { UpdateTask } from "../task/UpdateTask";
 import { formatDate } from "@/lib/formateDate";
-import { DeleteTaskDialog } from "../forms/Task/DeleteTask";
+import { DeleteTaskDialog } from "../task/DeleteTask";
 
 interface BookingListProps {
   task: any[];
@@ -108,6 +108,16 @@ export function TaskListTable({  events, task }: BookingListProps) {
       ),
       cell: ({ row }) => <Badge variant="outline">{formatDate(row.getValue("event_date"))}</Badge>,
       size:10
+    },
+    {
+      accessorKey: "event_time",
+      header:({ column }) => (
+        <div className=" ">
+            Event Time
+        </div>
+      ),
+      cell: ({ row }) => <Badge variant="outline">{row.getValue("event_time")}</Badge>,
+      size:120
     },
     {
       accessorKey: "event_address",
@@ -240,6 +250,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
                                         <TableHead className="w-[500px]">Assigned Staff</TableHead>
                                         <TableHead className="w-[250px]">Task Role</TableHead>
                                         <TableHead>Task Status</TableHead>
+                                        <TableHead>Task Due</TableHead>
                                         <TableHead className="w-32 ">
                                         <span className="sr-only">Actions</span>
                                         </TableHead>
@@ -261,6 +272,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
                                 </TableCell>
                                 <TableCell><Badge variant="outline">{tasks.task_role}</Badge></TableCell>
                                 <TableCell><Badge variant={tasks.task_status === 'Pending' ? 'destructive' : tasks.task_status === 'Completed' ? 'success' : 'default'}>{tasks.task_status}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{tasks.task_due}</Badge></TableCell>
                                   <TableCell>
                                   <div className="flex gap-4 justify-end ">
                                     <UpdateTask task_id={tasks.task_id} event_id={row.original.event_id} task_role={tasks.task_role} user_id={tasks.user_id} bookingid={row.original.bookingid} />

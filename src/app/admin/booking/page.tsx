@@ -1,7 +1,7 @@
 
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { BookingList } from '@/components/Marketer/booking/bookinglist'
+import { BookingList } from '@/components/booking/bookinglist'
 import { getBookingList, getBookingTaskDataAll } from '@/lib/data'
 import Loading from './loading'
 

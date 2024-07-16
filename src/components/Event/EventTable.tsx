@@ -36,9 +36,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import Link from "next/link";
-import { AddEvent } from "../forms/Event/AddEvent";
-import { UpdateEventDialog } from "../forms/Event/UpdateEvent";
-import { DeletePaymentEventDialog } from "../forms/Event/DeleteEvent";
+import { AddEvent } from "../Event/AddEvent";
+import { UpdateEventDialog } from "../Event/UpdateEvent";
+import { DeletePaymentEventDialog } from "../Event/DeleteEvent";
 import { formatDate } from "@/lib/formateDate";
 
 
@@ -192,6 +192,7 @@ export function EventTable({ bookings, events }: BookingListProps) {
                               <TableHeader className="text-xs">
                                 <TableHead className="w-32">Event Type</TableHead>
                                 <TableHead className="w-32 ">Event Date</TableHead>
+                                <TableHead className="w-32 ">Event Time</TableHead>
                                 <TableHead className="w-32 ">Event Address</TableHead>
                                 <TableHead className="w-32 "> Status</TableHead>
                                 <TableHead className="w-32 "> <span className="sr-only">Actions</span> </TableHead>
@@ -201,8 +202,10 @@ export function EventTable({ bookings, events }: BookingListProps) {
                               <TableRow key={events.event_id}>
                                 <TableCell><Badge variant="outline">{events.event_type}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{formatDate(events.event_date)}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{events.eventtime}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{events.event_address}</Badge></TableCell>
                                 <TableCell><Badge variant={events.event_status === 'No Task Assigned' ? 'destructive' : events.event_status === 'Completed' ? 'success' : 'default'}>{events.event_status}</Badge></TableCell>
+                                
                                 <TableCell>
                                 <div className="flex gap-4 justify-end mr-5">
                                   <UpdateEventDialog bookingid={row.original.booking_id} event_id={events.event_id} eventtype={events.event_type} eventdate={events.event_date} eventaddress={events.event_address} />

@@ -14,6 +14,7 @@ export const BookingSchema = z.object({
    paymentdetails_type:z.string().min(4),
    paymentdetails_desc:z.string().min(4),
    lock_by:z.string().min(1),
+   eventtime:z.string(),
   });
 
 export type BookingSchemaType = z.infer<typeof BookingSchema>;

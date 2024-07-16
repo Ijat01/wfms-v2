@@ -1,8 +1,7 @@
 import React, { Suspense } from 'react'
-import { DashboardTable } from '@/components/dashboard/DashboardTable'
+import { DashboardTable } from '@/components/Marketer/DashboardTable'
 import { DashboardAlertCard } from '@/components/dashboard/DashboardAlertCard'
 import MyTaskCard from '@/components/dashboard/MyTaskCard'
-import { useRouter } from 'next/router'
 import Loading from './loading'
 
 const page = () => {

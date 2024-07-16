@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { AddBookingForm } from "@/components/forms/Booking/AddBookingForm";
-import { AddPaymentForm } from "@/components/forms/Payment/AddPaymentForm";
+import { AddBookingForm } from "./AddBookingForm";
+import { AddPaymentForm } from "@/components/Payment/AddPaymentForm";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
