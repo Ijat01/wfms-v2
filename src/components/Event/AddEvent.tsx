@@ -41,6 +41,7 @@ const AddEventSchema = EventSchema.pick({
   event_type:true,
   event_date:true,
   event_address:true,
+  event_time:true,
   });
 
 export function AddEvent( { bookingid }: AddEventProps) {
@@ -113,6 +114,7 @@ export function AddEvent( { bookingid }: AddEventProps) {
             <Input id="bookingid" {...register("bookingid")} />
             {errors.bookingid && <p>{errors.bookingid.message}</p>}
           </div>
+          
           <div className="pt-4">
             <Label htmlFor="event_type">Event Type</Label>
             <Select
@@ -130,6 +132,11 @@ export function AddEvent( { bookingid }: AddEventProps) {
             {errors.event_type && (
               <p className="text-red-400 text-sm">{errors.event_type.message}</p>
             )}
+          </div>
+          <div className="pt-4">
+            <Label htmlFor="event_time">Event Time</Label>
+            <Input id="event_time" type="event_time" {...register("event_time")} />
+            {errors.event_time && <p>{errors.event_time.message}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="event_date">Event Date</Label>

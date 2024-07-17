@@ -238,6 +238,45 @@ export async function getEventDetailsTask(booking_id: string ) {
     const result = await db.tasks.findMany({
       where: {
         user_id: session.user.id,
+        task_status:"In Progress"
+      },
+      include: {
+        users: true,
+        events: {
+          include: {
+            bookings: true,
+          },
+        },
+      },
+    });
+  
+    return result.map((task) => ({
+      task_id: task.task_id.toString(),
+      user_name: task.users?.user_fullname,
+      user_role: task.users?.user_role,
+      task_role: task.task_role,
+      task_status: task.task_status,
+      task_description: task.task_description,
+      duedate: task.task_duedate?.toLocaleDateString(),
+      eventdate: task.events?.event_date?.toLocaleDateString(),
+      eventaddress: task.events?.event_address,
+      event_type: task.events?.event_type?.toLocaleUpperCase(),
+      groom_name: task.events?.bookings?.groom_name,
+      bride_name: task.events?.bookings?.bride_name,
+    }));
+  }
+
+  export async function getMyTaskKanban(){
+
+    const session = await getAuthSession()
+
+    if (!session){
+      throw new Error('You must be signed in to create a user');
+    }
+
+    const result = await db.tasks.findMany({
+      where: {
+        user_id: session.user.id,
       },
       include: {
         users: true,
@@ -301,6 +340,7 @@ export async function getEventDetailsTask(booking_id: string ) {
         paymentcreatedat: payment.created_at?.toLocaleDateString(),
       }));
   }
+  
 
   export async function getPaymentDataAll() {
    

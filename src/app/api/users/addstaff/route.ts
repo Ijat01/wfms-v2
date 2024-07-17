@@ -1,19 +1,22 @@
-"use server";
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { AddStaffSchema, AddStaffSchemaType } from '@/lib/validators/users';
 import { hash } from 'bcrypt';
 import { getAuthSession } from '@/lib/auth';
+import { Resend } from 'resend';
+import LoginPasswordEmail from '../../../../../emails/RegisterEmail';
 
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { icno, fullname, email, password, role } = AddStaffSchema.parse(body) as AddStaffSchemaType;
 
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     // Ensure the user is authenticated
     const session = await getAuthSession();
     if (!session) {
-      throw new Error('You must be signed in to create a user');
+      return new NextResponse('You must be signed in to create a user', { status: 401 });
     }
 
     console.log('Session ID:', session.user.id);
@@ -29,62 +32,27 @@ export async function POST(req: Request) {
         user_email: email,
         user_password: hashedPassword,
         user_role: role,
-        created_by: session.user.id, // Ensure to add the creator's ID
+        created_by: session.user.id,
       },
     });
 
     console.log('User successfully created:', newUser);
 
-    // Return a 201 Created response with the newly created user
-    return new Response ('OK')
-  } catch (error) {
-    console.error('Error creating user:', error);
-    
-    // Return a 500 Internal Server Error response if an error occurs
-    return new Response (
-      'Unable to create user. Please try again later.', 
-      {status: 500}
-      
-      );
-  }
-}
-
-export async function PATCH(req: Request) {
-  try {
-    const body = await req.json();
-    const { icno, fullname, email, role } = AddStaffSchema.parse(body) 
-
-    // Ensure the user is authenticated
-    const session = await getAuthSession();
-    if (!session) {
-      throw new Error('You must be signed in to update a user');
-    }
-
-    console.log('Session ID:', session.user.id);
-
-    // Hash the password before storing it
-    // Create a new user record in the database
-    const updatedUser = await db.users.update({
-      where: { user_id: icno },
-      data: {
-        user_fullname: fullname,
-        user_email: email,
-        user_role: role, // Ensure to add the updater's ID
-      },
+    const { data, error } = await resend.emails.send({
+      from: "no-reply <no-reply@pwms.xyz>",
+      to: email,
+      subject: "Form Submission",
+      react: LoginPasswordEmail({ password: password }),
     });
 
-    console.log('User successfully update:', updatedUser);
+    if (error) {
+      console.error('Error sending email:', error);
+      return NextResponse.json({ error }, { status: 500 });
+    }
 
-    // Return a 201 Created response with the newly created user
-    return new Response ('OK')
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Error updating user:', error);
-    
-    // Return a 500 Internal Server Error response if an error occurs
-    return new Response (
-      'Unable to update user. Please try again later.', 
-      {status: 500}
-      
-      );
+    console.error('Error creating user:', error);
+    return new NextResponse('Unable to create user. Please try again later.', { status: 500 });
   }
 }

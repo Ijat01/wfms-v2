@@ -36,6 +36,7 @@ interface UpdateEventProps {
   eventtype: string;
   eventdate: string;
   eventaddress: string;
+  event_time: string;
 }
 
 export function UpdateEventDialog({
@@ -44,6 +45,7 @@ export function UpdateEventDialog({
   eventtype,
   eventdate,
   eventaddress,
+  event_time,
 }: UpdateEventProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -68,8 +70,10 @@ export function UpdateEventDialog({
       setValue("event_type", eventtype);
       setValue("event_date", formatDate(eventdate)); // Format date here
       setValue("event_address", eventaddress);
+      setValue("event_time", event_time)
+      
     }
-  }, [isOpen, bookingid, event_id, eventtype, eventdate, eventaddress, setValue]);
+  }, [isOpen, bookingid, event_id, eventtype, eventdate, eventaddress,event_time, setValue]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -133,6 +137,7 @@ export function UpdateEventDialog({
             <Input id="eventid" {...register("eventid")} />
             {errors.eventid && <p>{errors.eventid.message}</p>}
           </div>
+         
           <div className="">
             <Label htmlFor="event_type">Event Type</Label>
             <Select
@@ -153,6 +158,11 @@ export function UpdateEventDialog({
             {errors.event_type && (
               <p className="text-red-400 text-sm">{errors.event_type.message}</p>
             )}
+          </div>
+          <div className="pt-4">
+            <Label htmlFor="event_time">Event ID</Label>
+            <Input id="event_time" type="time" {...register("event_time")} />
+            {errors.eventid && <p>{errors.eventid.message}</p>}
           </div>
           <div className="pt-4">
             <Label htmlFor="event_date">Event Date</Label>

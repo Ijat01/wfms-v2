@@ -36,7 +36,7 @@ export function AddStaffDialog() {
 
   const mutation = useMutation({
     mutationFn: async (formData: AddStaffSchemaType) => {
-      const { data } = await axios.post("/api/users/addstaff/", formData);
+      const { data } = await axios.post("/api/users/addstaff", formData);
       return data;
     },
     onError: (err: AxiosError) => {
@@ -45,21 +45,20 @@ export function AddStaffDialog() {
       } else {
         toast({
           title: "Something went wrong.",
-          description:
-            "Staff wasn't added successfully. Please try again.",
+          description: "Staff wasn't added successfully. Please try again.",
           variant: "destructive",
         });
       }
     },
     onSuccess: (data) => {
-       // Use router.reload() or router.replace('/path') as per your requirement
+      // Use router.reload() or router.replace('/path') as per your requirement
       reset(); // Reset form fields
       toast({
         title: "Success!",
         description: "New staff added successfully.",
         variant: "success",
       });
-      router.refresh()
+      router.refresh();
     },
   });
 

@@ -208,7 +208,7 @@ export function EventTable({ bookings, events }: BookingListProps) {
                                 
                                 <TableCell>
                                 <div className="flex gap-4 justify-end mr-5">
-                                  <UpdateEventDialog bookingid={row.original.booking_id} event_id={events.event_id} eventtype={events.event_type} eventdate={events.event_date} eventaddress={events.event_address} />
+                                  <UpdateEventDialog bookingid={row.original.booking_id} event_id={events.event_id} eventtype={events.event_type} eventdate={events.event_date} eventaddress={events.event_address} event_time={events.eventtime}/>
                                   <DeletePaymentEventDialog event_id={events.event_id}/>
                                 </div>
                                   </TableCell>

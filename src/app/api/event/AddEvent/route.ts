@@ -2,12 +2,14 @@
 import { db } from '@/lib/db';
 import { getAuthSession } from '@/lib/auth';
 import { z } from 'zod';
+import { time } from 'console';
 
 const UpdateEventSchema = z.object({
     bookingid:z.string().min(1),
     event_type:z.string().min(1),
     event_date:z.string().min(1),
     event_address:z.string().min(1),
+    event_time:z.string()
   });
 
 export async function POST(req: Request) {
@@ -18,6 +20,7 @@ export async function POST(req: Request) {
         event_type,
         event_date,
         event_address,
+        event_time
      } = UpdateEventSchema.parse(body) ;
 
      const formattedDate = new Date(event_date).toISOString();
@@ -38,6 +41,7 @@ export async function POST(req: Request) {
         event_type:event_type,
         event_date:formattedDate,
         event_address:event_address,
+        event_time: event_time,
         event_status:"No Task Assigned" // Ensure to add the creator's ID
       },
     });

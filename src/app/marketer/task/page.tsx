@@ -1,14 +1,14 @@
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import Board from '@/components/mytask/Board'
-import { getMytask } from '@/lib/data'
+import { getMyTaskKanban } from '@/lib/data'
 import Loading from './loading'
 
 
 
 const page = async () => {
 
-  const data = await getMytask();
+  const data = await getMyTaskKanban();
 
   return (
 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">

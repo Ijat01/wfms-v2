@@ -13,6 +13,7 @@ export async function PATCH(req: Request) {
             event_type,
             event_date,
             event_address,
+            event_time,
          } = EventSchema.parse(body) as EventSchemaType;
     
          const formattedDate = new Date(event_date).toISOString();
@@ -37,6 +38,7 @@ export async function PATCH(req: Request) {
             event_type:event_type,
             event_date:formattedDate,
             event_address:event_address,
+            event_time:event_time,
             event_status:"No Task Assigned" // Ensure to add the creator's ID
           },
         });
