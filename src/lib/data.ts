@@ -527,7 +527,12 @@ export async function getEventList() {
   const result = await db.events.findMany({
    include:{
     bookings: true,
-   }
+   },
+   orderBy: {
+    event_id: 'asc', // Sort by payment_id in ascending order
+  },
+
+   
   });
 
   return result.map((events) => ({
