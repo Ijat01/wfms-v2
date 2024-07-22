@@ -1,12 +1,16 @@
 import { db } from '@/lib/db';
 import { TaskSchemaType, TaskSchema } from '@/lib/validators/task';
 import { getAuthSession } from '@/lib/auth';
+import { Resend } from 'resend';
+import SingleTaskEmail from '../../../../../emails/SingleTaskEmail';
+import MultipleTaskEmail from '../../../../../emails/MultipleTaskEmail';
+
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { task_role, user_id, event_id, event_date, bookingid, confirmation } = TaskSchema.parse(body) as TaskSchemaType;
-
+    const resend = new Resend(process.env.RESEND_API_KEY);
     // Ensure the user is authenticated
     const session = await getAuthSession();
     if (!session) {
@@ -18,12 +22,29 @@ export async function POST(req: Request) {
     const newbookingid = +bookingid;
     const newEventId = +event_id;
 
-    // Retrieve the event details
+    const staffdetails = await db.users.findUnique({
+      where:{
+        user_id: user_id
+      }
+    })
+
+    if (!staffdetails || !staffdetails.user_email) {
+      throw new Error('Staff email not found');
+    }
+
+    const staffemail: string = staffdetails.user_email;
+     
+    const booking = await db.bookings.findUnique({
+      where:{
+        booking_id: newbookingid,
+      }
+    })
+
     const event = await db.events.findUnique({
       where: {
         event_id: newEventId,
       },
-    });
+    })
 
     if (!event || !event.event_date) {
       throw new Error('Event not found or event date is missing');
@@ -109,7 +130,7 @@ export async function POST(req: Request) {
       }
 
       if (otherEvent) {
-        const newTask = await db.tasks.create({
+        const newsecondTask = await db.tasks.create({
           data: {
             user_id: user_id,
             event_id: otherEvent.event_id,
@@ -119,22 +140,19 @@ export async function POST(req: Request) {
             task_duedate: taskDueDate.toISOString(), // Ensure ISO-8601 format
           },
         });
-  
-        console.log(`Task created for event ${otherEvent.event_id}:`, newTask);
-      }
-      // Create new task for the current event
-      const newTask = await db.tasks.create({
-        data: {
-          user_id: user_id,
-          event_id: newEventId,
-          task_role: task_role,
-          task_description: "assigned",
-          task_status: "In Progress",
-          task_duedate: taskDueDate.toISOString(), // Ensure ISO-8601 format
-        },
-      });
-  
-      const updateEvent = await db.events.update({
+
+        const newfirstTask = await db.tasks.create({
+          data: {
+            user_id: user_id,
+            event_id: newEventId,
+            task_role: task_role,
+            task_description: "assigned",
+            task_status: "In Progress",
+            task_duedate: taskDueDate.toISOString(), // Ensure ISO-8601 format
+          },
+        });
+
+        const updateEvent = await db.events.update({
           where:{
               event_id:newEventId,
           },
@@ -142,9 +160,7 @@ export async function POST(req: Request) {
               event_status:"Task Assigned"
           }
       })
-  
-      if (otherEvent){
-      const updateOtherEvent = await db.events.update({
+        const updateOtherEvent = await db.events.update({
           where:{
               event_id:otherEvent.event_id,
           },
@@ -152,9 +168,66 @@ export async function POST(req: Request) {
               event_status:"Task Assigned"
           }
       })
+
+      const { data, error } = await resend.emails.send({
+        from: "no-reply <no-reply@pwms.xyz>",
+        to: staffemail,
+        subject: "Task Assigned",
+        react: MultipleTaskEmail({  
+          name: staffdetails?.user_fullname,
+          taskrole: task_role,
+          groomname:booking?.groom_name,
+          bridename:booking?.bride_name,
+          eventtype:event.event_type,
+          eventdate: event.event_date.toLocaleDateString(),
+          eventtime:event.event_time,
+          seceventtype:otherEvent.event_type,
+          seceventdate:otherEvent.event_date?.toLocaleDateString(),
+          seceventtime:otherEvent.event_time, }),
+      });
+
+      }else{
+
+        const newfirstTask = await db.tasks.create({
+          data: {
+            user_id: user_id,
+            event_id: newEventId,
+            task_role: task_role,
+            task_description: "assigned",
+            task_status: "In Progress",
+            task_duedate: taskDueDate.toISOString(), // Ensure ISO-8601 format
+          },
+        });
+
+        const updateEvent = await db.events.update({
+          where:{
+              event_id:newEventId,
+          },
+          data:{
+              event_status:"Task Assigned"
+          }
+      })
+
+      const { data, error } = await resend.emails.send({
+        from: "no-reply <no-reply@pwms.xyz>",
+        to: staffemail,
+        subject: "Task Assigned",
+        react: SingleTaskEmail({  
+          name: staffdetails?.user_fullname,
+          taskrole: task_role,
+          groomname:booking?.groom_name,
+          bridename:booking?.bride_name,
+          eventtype:event.event_type,
+          eventdate: event.event_date.toLocaleDateString(),
+          eventtime:event.event_time, }),
+      });
+
       }
+     
   
-      console.log('Task created for current event:', newTask);
+     
+  
+   
   
       // Return a 201 Created response with the newly created task
       return new Response('OK', { status: 201 });

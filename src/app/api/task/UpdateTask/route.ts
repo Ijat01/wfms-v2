@@ -2,6 +2,8 @@
 import { db } from '@/lib/db';
 import { getAuthSession } from '@/lib/auth';
 import { z } from 'zod';
+import { Resend } from 'resend';
+import SingleTaskEmail from '../../../../../emails/SingleTaskEmail';
 
 const UpdateTaskSchema = z.object({
     user_id: z.string(),
@@ -21,6 +23,7 @@ export async function PATCH(req: Request) {
             task_id,
             bookingid,
         } = UpdateTaskSchema.parse(body);
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         // Ensure the user is authenticated
         const session = await getAuthSession();
@@ -30,9 +33,30 @@ export async function PATCH(req: Request) {
 
         console.log('Session ID:', session.user.id);
 
+        
+      
+
         const newEventId = +event_id;
         const newTaskId = +task_id;
         const newbookingid = +bookingid;
+
+        const staffdetails = await db.users.findUnique({
+            where:{
+              user_id: user_id
+            }
+          })
+      
+          if (!staffdetails || !staffdetails.user_email) {
+            throw new Error('Staff email not found');
+          }
+      
+          const staffemail: string = staffdetails.user_email;
+
+          const booking = await db.bookings.findUnique({
+            where:{
+              booking_id: newbookingid,
+            }
+          })
 
         const event = await db.events.findUnique({
             where: {
@@ -127,6 +151,20 @@ export async function PATCH(req: Request) {
 
         console.log('Task successfully updated:', updatedTask);
 
+        const { data, error } = await resend.emails.send({
+            from: "no-reply <no-reply@pwms.xyz>",
+            to: staffemail,
+            subject: "Task Assigned",
+            react: SingleTaskEmail({  
+              name: staffdetails?.user_fullname,
+              taskrole: task_role,
+              groomname:booking?.groom_name,
+              bridename:booking?.bride_name,
+              eventtype:event.event_type,
+              eventdate: event.event_date.toLocaleDateString(),
+              eventtime:event.event_time, }),
+          });
+
         // Return a 200 OK response with the updated task
         return new Response('OK');
     } catch (error) {
@@ -139,7 +177,7 @@ export async function PATCH(req: Request) {
             if (error.message.includes('You must be signed in')) {
                 errorMessage = error.message;
                 statusCode = 401;
-            } if (error.message.includes('Staff is already assigned to an event on the same date for the same booking')) {
+            } if (error.message.includes('Staff is already assigned to an event on the same date')) {
                 errorMessage = error.message;
                 statusCode = 402;
             }

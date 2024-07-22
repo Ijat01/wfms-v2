@@ -25,7 +25,32 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
     const handleDragEnd = () => {
       setDraggingTaskId(null);
     };
+
+    const getPriorityStatus = (duedate: Date | null ) => {
+      const currentDate = new Date();
+      if (!duedate) {
+        return "Low";
+      }
   
+      const diffTime = duedate.getTime() - currentDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays <= 5) return "High";
+      if (diffDays <= 10) return "Medium";
+      return "Low";
+    };
+  
+    const getStatusBadge = (priorityStatus: string) => {
+      switch (priorityStatus) {
+        case "High":
+          return <Badge className="text-xs" variant="destructive">High</Badge>;
+        case "Medium":
+          return <Badge className="text-xs" variant="warning">Medium</Badge>;
+        case "Low":
+          return <Badge className="text-xs" variant="success">Low</Badge>;
+        default:
+          return null;
+      }
+    };
     return (
       <Droppable droppableId={droppableId}>
         {(provided) => (
@@ -90,12 +115,19 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
                               </div>
                               <Badge variant="outline">{taskassignment.eventaddress}</Badge>
                               </div>
-                              <div className="flex items-center">
+                              <div className="flex items-center pb-2">
                               <div className="text-xs pr-2">
                                 Due Date:
                               </div>
                               <Badge variant="outline">{taskassignment.duedate}</Badge>
                               </div>
+                              <div className="flex items-center">
+                              <div className="text-xs pr-2">
+                                Priority Level:
+                              </div>
+                              {getStatusBadge(getPriorityStatus(taskassignment.duedatecompare))}
+                              </div>
+                              
                               
                             </div>
                           </div>

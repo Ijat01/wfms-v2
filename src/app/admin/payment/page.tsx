@@ -2,7 +2,7 @@
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { PaymentList } from '@/components/Payment/paymentlist'
+import { PaymentList } from '@/components/Payment/PaymentListTableAdmin'
 import { getBookingTaskDataAll, getPaymentDataAll, getPaymentList } from '@/lib/data'
 import Loading from './loading'
 

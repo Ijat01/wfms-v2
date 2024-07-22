@@ -2,12 +2,15 @@
 import { db } from '@/lib/db';
 import { getAuthSession } from '@/lib/auth';
 import { BookingSchema, BookingSchemaType } from '@/lib/validators/booking';
+import { Resend } from 'resend';
+import BookingEmail from '../../../../../emails/BookingEmail';
+import { formatDate } from '@/lib/formateDate';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { lock_by, packageid, groomname, bridename, eventaddress, contactno, eventdate, payment_total, paymentdetail_amount, paymentdetails_type, paymentdetails_desc, confirmProceed, eventtime } = BookingSchema.parse(body) as BookingSchemaType;
-
+    const resend = new Resend(process.env.RESEND_API_KEY);
     // Ensure the user is authenticated
     const session = await getAuthSession();
     if (!session) {
@@ -38,6 +41,14 @@ export async function POST(req: Request) {
     if (bookingCount >= 5 && !confirmProceed) {
       return new Response('Booking limit exceeded for this date. Do you want to proceed?', { status: 400 });
     }
+
+    const findpackage = await db.packages.findUnique({
+      where:{
+        package_id: packageid
+      }
+    })
+
+    const packagename = findpackage?.package_name;
 
     // Proceed to create the booking
     const newBooking = await db.bookings.create({
@@ -98,6 +109,13 @@ export async function POST(req: Request) {
     }
 
     console.log('Booking successfully created:', newBooking);
+
+    const { data, error } = await resend.emails.send({
+      from: "no-reply <no-reply@pwms.xyz>",
+      to: "izatsaf07@gmail.com",
+      subject: "New Booking",
+      react: BookingEmail({ groomname: groomname, bridename:bridename, contactno:contactno, packagename:packagename , paymenttotal:payment_total ,handleby:lock_by , amountpaid:paymentdetail_amount , balance: newBalance , eventdate:formatDate(eventdate), eventtime:eventtime }),
+    });
 
     // Return success response with the created booking data
     return new Response(JSON.stringify(newBooking), { status: 201 });

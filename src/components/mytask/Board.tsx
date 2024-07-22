@@ -2,7 +2,7 @@
 import axios from "axios";
 import { DropResult, DragDropContext } from "@hello-pangea/dnd";
 import Column from "./column";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MyTask } from "@/types/types";
 import {
@@ -14,8 +14,11 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
+import { Input } from "../ui/input"; 
+
 const Board: React.FC<{ board: MyTask[] }> = ({ board }) => {
     const [tasks, setTasks] = useState<MyTask[]>(board);
+    const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -70,34 +73,53 @@ const Board: React.FC<{ board: MyTask[] }> = ({ board }) => {
         }
     };
 
+    // Filter the tasks based on the search query
+    const filteredTasks = tasks.filter(task =>
+        task.groom_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.bride_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.eventdate?.includes(searchQuery)
+    );
+
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Task Assignment</CardTitle>
-                    <CardDescription>
-                        Manage Task Assignment
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-                    <Column
-                        title="In Progress"
-                        tasks={tasks.filter(
-                            (task) => task.task_status === "In Progress"
-                        )}
-                        droppableId="In Progress"
+        <>
+            
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Task Assignment</CardTitle>
+                        <CardDescription>
+                            Manage Task Assignment
+                        </CardDescription>
+                    </CardHeader>
+                    <div className="pl-6">
+                    <Input
+                        type="text"
+                        placeholder="Search tasks..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="border w-96 p-2 rounded mb-4"
                     />
-                    <Column
-                        title="Completed"
-                        tasks={tasks.filter(
-                            (task) => task.task_status === "Complete"
-                        )}
-                        droppableId="Completed"
-                    />
-                </CardContent>
-                <CardFooter></CardFooter>
-            </Card>
-        </DragDropContext>
+                    </div>
+                    <CardContent className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                        <Column
+                            title="In Progress"
+                            tasks={filteredTasks.filter(
+                                (task) => task.task_status === "In Progress"
+                            )}
+                            droppableId="In Progress"
+                        />
+                        <Column
+                            title="Completed"
+                            tasks={filteredTasks.filter(
+                                (task) => task.task_status === "Complete"
+                            )}
+                            droppableId="Completed"
+                        />
+                    </CardContent>
+                    <CardFooter></CardFooter>
+                </Card>
+            </DragDropContext>
+        </>
     );
 };
 

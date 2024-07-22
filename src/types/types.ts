@@ -55,4 +55,5 @@ export interface MyTask {
   event_type: string | null | undefined;
   groom_name: string | undefined;
   bride_name: string | undefined;
+  duedatecompare: Date | null
 }

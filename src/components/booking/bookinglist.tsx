@@ -15,6 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,62 +38,104 @@ export function BookingList({ bookings, events }: BookingListProps) {
   // Define columns for the booking table
   const columns: ColumnDef<typeof bookings[0]>[] = [
     {
+      accessorKey: "count",
+      header: ({ column }) => (
+        <div className="">
+          #
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="">
+          {row.index + 1}
+        </div>
+      ),
+      size:20
+    },
+    {
       accessorKey: "booking_id",
-      header: "ID",
+      header: ({ column }) =>(<div className="text-center"> BOOKING ID</div>), 
+      cell: ({ row }) => <div className="text-center"> <Badge variant="outline">{row.getValue("booking_id")}</Badge> </div>,
+      size: 10,
     },
     {
       accessorKey: "customername",
       header: ({ column }) => (
-        <div className="text-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Customer
-            <CaretSortIcon className="ml-2 h-4 w-4" />
-          </Button>
+        <div className="text-center pl-8 pr-14">
+            CUSTOMER NAME
         </div>
       ),
       cell: ({ row }) => (
-        <div className="text-center">
+        <div className="text-center pl-8 pr-14">
           <Badge variant="outline">{row.getValue("customername")}</Badge>
         </div>
       ),
+      size: 150
     },
     {
       accessorKey: "contact",
-      header: "Contact",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("contact")}</Badge>,
+      header: ({ column }) => (
+        <div className="text-center ">
+            CONTACT
+        </div>
+      ),
+      cell: ({ row }) =>
+        <div className="text-center">
+           <Badge variant="outline">{row.getValue("contact")}</Badge>
+        </div>,
+      size:10,
     },
     {
       accessorKey: "bookingdate",
-      header: "Booking Date",
+      header: ({ column }) => (
+        <div className="text-center pr-10 ">
+            BOOKING DATE
+        </div>
+      ),
       cell: ({ row }) => (
-        <div className="">
+        <div className="text-center pr-10">
           <Badge variant="outline">{row.getValue("bookingdate")}</Badge>
         </div>
       ),
+      size:10,
     },
   
     {
       accessorKey: "packagename",
-      header: "Package",
+      header: ({ column }) => (
+        <div className="text-center ">
+            PACKAGE
+        </div>
+      ),
       cell: ({ row }) => (
-        <div className="   ">
+        <div className=" text-center  ">
           <Badge variant="outline">{row.getValue("packagename")}</Badge>
         </div>
       ),
+      size:10,
     },
     {
       accessorKey: "handleby",
-      header: "Handle by",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("handleby")}</Badge>,
+      header: ({ column }) => (
+        <div className="text-center pl-14">
+            HANDLE BY
+        </div>
+      ),
+      cell: ({ row }) => 
+        <div className="text-center pl-14"> <Badge variant="outline">{row.getValue("handleby")}</Badge> </div>,
+      size:10,
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => (
         <div className="flex gap-4 justify-end mr-5">
+          <Button className="bg-blue-500"><Link href={{
+            pathname: "/admin/taskdetail",
+            query:{
+              bookingid: row.original.booking_id,
+            }
+          }}><Eye></Eye></Link>
+          </Button>
           <UpdateBookingDialog booking={row.original} />
           <DeleteBookingDialog booking={row.original} />
         </div>
@@ -210,7 +253,7 @@ export function BookingList({ bookings, events }: BookingListProps) {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} style={{width: `${header.getSize()}px` }}>
                         {header.isPlaceholder
                           ? null
                           : flexRender(header.column.columnDef.header, header.getContext())}
@@ -247,7 +290,7 @@ export function BookingList({ bookings, events }: BookingListProps) {
                               <TableBody>
                               {events.filter(t => t.bookingid == row.original.booking_id).map(events => (
                               <TableRow key={events.event_id}>
-                                <TableCell><Badge variant="outline">{events.event_type}</Badge></TableCell>
+                                <TableCell><Badge variant={events.event_type === 'Sanding' ? 'sanding' : events.event_type === 'Nikah' ? 'nikah' : 'outline'}>{events.event_type}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{formatDate(events.event_date)}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{events.eventtime}</Badge></TableCell>
                                 <TableCell><Badge variant="outline">{events.event_address}</Badge></TableCell>

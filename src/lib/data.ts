@@ -3,6 +3,12 @@ import { db } from "./db";
 
 
 export async function getBookingTaskDataAll() {
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+  
   const result = await db.events.findMany({
    include:{
     bookings: true,
@@ -258,6 +264,7 @@ export async function getEventDetailsTask(booking_id: string ) {
       task_status: task.task_status,
       task_description: task.task_description,
       duedate: task.task_duedate?.toLocaleDateString(),
+      duedatecompare: task.task_duedate,
       eventdate: task.events?.event_date?.toLocaleDateString(),
       eventaddress: task.events?.event_address,
       event_type: task.events?.event_type?.toLocaleUpperCase(),
@@ -296,6 +303,7 @@ export async function getEventDetailsTask(booking_id: string ) {
       task_status: task.task_status,
       task_description: task.task_description,
       duedate: task.task_duedate?.toLocaleDateString(),
+      duedatecompare: task.task_duedate,
       eventdate: task.events?.event_date?.toLocaleDateString(),
       eventaddress: task.events?.event_address,
       event_type: task.events?.event_type?.toLocaleUpperCase(),
@@ -360,6 +368,7 @@ export async function getEventDetailsTask(booking_id: string ) {
   }
 
   export async function countBooking() {
+    
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-indexed
@@ -376,6 +385,74 @@ export async function getEventDetailsTask(booking_id: string ) {
   
     return result;
   }
+
+  export async function countNewTaskUser() {
+    const session = await getAuthSession();
+  
+      if (!session) {
+        throw new Error('You must be signed in to create a user');
+      }
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-indexed
+  
+    const result = await db.tasks.count({
+      where: {
+        user_id: session.user.id,
+        created_at: {
+          gte: new Date(`${currentYear}-${currentMonth}-01`),
+          lte: new Date(`${currentYear}-${currentMonth + 1}-01`), // Next month's 1st day to include all days of current month
+        },
+      },
+    });
+  
+    return result;
+  }
+
+  export async function countPendingUser() {
+    const session = await getAuthSession();
+  
+    if (!session) {
+      throw new Error('You must be signed in to create a user');
+    }
+
+    const result = await db.tasks.count({
+      where: {
+        user_id:session.user.id,
+        task_status: "In Progress"
+      },
+    });
+  
+    return result;
+  }
+
+  export async function countCompleteUser() {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-indexed
+    
+    const session = await getAuthSession();
+  
+    if (!session) {
+      throw new Error('You must be signed in to create a user');
+    }
+
+    const result = await db.tasks.count({
+      where: {
+        user_id:session.user.id,
+        task_status: "Complete",
+        // Assuming you have a field like `completed_at` that indicates when the task was completed
+        updated_at: {
+          gte: new Date(`${currentYear}-${currentMonth}-01`),
+          lte: new Date(`${currentYear}-${currentMonth + 1}-01`), // Next month's 1st day to include all days of current month
+        },
+      },
+    });
+  
+    return result;
+  }
+  
 
   export async function countPending() {
     const currentDate = new Date();
@@ -437,7 +514,7 @@ export async function getTaskList() {
     task_id: task.task_id.toLocaleString(),
     user_name: task.users?.user_fullname,
     user_role: task.users?.user_role,
-    task_due: task.task_duedate?.toDateString(),
+    task_due: task.task_duedate?.toLocaleDateString(),
     task_role: task.task_role,
     task_status: task.task_status,
     task_description:task.task_description,
@@ -455,17 +532,17 @@ export async function getEventList() {
 
   return result.map((events) => ({
     bookingid: events?.booking_id?.toLocaleString(),
-    event_title:events.bookings ? `${ events.event_type} of ${ events.bookings?.groom_name} & ${ events.bookings?.bride_name}`.toLocaleUpperCase() : 'Unknown',
+    customername:`${ events.bookings?.groom_name} & ${ events.bookings?.bride_name}`.toLocaleUpperCase(),
     event_id:events.event_id.toString(), 
     event_time:events.event_time,
-    event_date: events?.event_date, // Access event_date from the events relation
+    event_date: events?.event_date?.toLocaleDateString(), // Access event_date from the events relation
     event_address: events?.event_address, // Access event_address from the events relation
     event_type: events?.event_type,
     event_status: events?.event_status
   }));
 }
 
-export async function getAllTaskUsers(){
+export async function getAllTaskUsersInprogress(){
 
   const session = await getAuthSession()
 
@@ -496,6 +573,7 @@ export async function getAllTaskUsers(){
     task_status: task.task_status,
     task_description: task.task_description,
     duedate: task.task_duedate?.toLocaleDateString(),
+    duedatecompare: task.task_duedate,
     eventdate: task.events?.event_date,
     eventdate_string: task.events?.event_date?.toLocaleDateString(),
     eventaddress: task.events?.event_address,
@@ -504,4 +582,95 @@ export async function getAllTaskUsers(){
     bride_name: task.events?.bookings?.bride_name,
   }));
   
-} 
+}
+
+export async function getAllTaskUsersComplete(){
+
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const result = await db.tasks.findMany({
+    where:{
+      user_id:session.user.id,
+      task_status:"Complete"
+    },
+    include: {
+      users: true,
+      events: {
+        include: {
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  return result.map((task) => ({
+    task_id: task.task_id.toString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description: task.task_description,
+    duedate: task.task_duedate?.toLocaleDateString(),
+    duedatecompare: task.task_duedate,
+    eventdate: task.events?.event_date,
+    eventdate_string: task.events?.event_date?.toLocaleDateString(),
+    eventaddress: task.events?.event_address,
+    event_type: task.events?.event_type?.toLocaleUpperCase(),
+    groom_name: task.events?.bookings?.groom_name,
+    bride_name: task.events?.bookings?.bride_name,
+  }));
+  
+}
+
+export async function getAllTaskUsersDueThisWeek() {
+  const session = await getAuthSession();
+
+  if (!session) {
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-indexed
+  const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
+  const startOfNextMonth = new Date(currentYear, currentMonth, 1);
+
+  const result = await db.tasks.findMany({
+    where: {
+      user_id: session.user.id,
+      task_duedate: {
+        gte: startOfMonth,
+        lt: startOfNextMonth,
+      },
+    },
+    include: {
+      users: true,
+      events: {
+        include: {
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  return result.map((task) => ({
+    task_id: task.task_id.toString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description: task.task_description,
+    duedate: task.task_duedate?.toLocaleDateString(),
+    duedatecompare: task.task_duedate,
+    eventdate: task.events?.event_date,
+    eventdate_string: task.events?.event_date?.toLocaleDateString(),
+    eventaddress: task.events?.event_address,
+    event_type: task.events?.event_type?.toLocaleUpperCase(),
+    groom_name: task.events?.bookings?.groom_name,
+    bride_name: task.events?.bookings?.bride_name,
+  }));
+}

@@ -38,6 +38,7 @@ import Link from "next/link";
 import { AddPaymentDetails } from "@/components/Payment/AddPaymentDetails";
 import { UpdatePaymentDialog } from "@/components/Payment/UpdatePaymentDetails";
 import { DeletePaymentDetailsDialog } from "@/components/Payment/DeletePaymentDetails";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
 
 interface BookingListProps {
   payments: any[];
@@ -49,65 +50,70 @@ export function PaymentList({ payments, paymentdetails }: BookingListProps) {
   // Define columns for the booking table
   const columns: ColumnDef<typeof payments[0]>[] = [
     {
+      accessorKey: "count",
+      header: ({ column }) => (
+        <div className="">
+          #
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="mx-0">
+          {row.index + 1}
+        </div>
+      ),
+      size:20
+    },
+    {
       accessorKey: "paymentid",
       header: ({ column }) =>(<div className=""> ID </div>),
       cell: ({ row }) => <div className="">{row.getValue("paymentid")}</div>,
     },
     {
         accessorKey: "bookingid",
-        header: ({ column }) =>(<div className="w-2"> BID </div>), 
-        cell: ({ row }) => <Badge variant="outline">{row.getValue("bookingid")}</Badge>,
+        header: ({ column }) =>(<div className="text-center"> BOOKING ID</div>), 
+        cell: ({ row }) => <div className="text-center"> <Badge variant="outline">{row.getValue("bookingid")}</Badge> </div>,
+        size:10
       },
     {
       accessorKey: "customername",
       header: ({ column }) => (
-        <div className=" text-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Customer
-            <CaretSortIcon className="ml-2 h-4 w-4" />
-          </Button>
+        <div className=" text-center pr-14">
+            CUSTOMER NAME
         </div>
       ),
       cell: ({ row }) => (
-        <div className="text-center">
+        <div className="text-center pr-14">
           <Badge variant="outline">
             {row.getValue("customername")}
           </Badge>
         </div>
       ),
+      size: 150
     },
     {
       accessorKey: "contact",
-      header: "Contact",
-      cell: ({ row }) => <Badge variant="outline">{row.getValue("contact")}</Badge>,
+      header:  ({ column }) =>(<div className="text-center pr-16">CONTACT</div>),
+      cell: ({ row }) =><div className="text-center pr-16"> <Badge variant="outline">{row.getValue("contact")}</Badge> </div>,
+      size:10
     },
     {
       accessorKey: "paymenttotal",
-      header:"Total",
+      header:({ column }) =>(<div className=" pr-16">TOTAL</div>),
       cell: ({ row }) => <div className="font-bold"> RM {row.getValue("paymenttotal")}</div>,
+      size:10
     },
     {
         accessorKey: "paymentbalance",
-        header:"Balance",
+        header:"BALANCE",
         cell: ({ row }) =><div className="font-bold"> RM {row.getValue("paymentbalance")}</div>,
+        size:10
       },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => (
         <div className="flex gap-4 justify-end mr-5">
-          <Button className="bg-blue-500"><Link href={{
-            pathname: "/admin/taskdetail",
-            query:{
-              bookingid: row.original.booking_id,
-            }
-          }}><Eye></Eye></Link>
-          </Button>
           <AddPaymentDetails paymentid={row.original.paymentid} paymentbalance={row.original.paymentbalance}/>
-          <UpdatePaymentDialog payment_balance={row.original.paymentbalance} payment_id={row.original.paymentid} payment_total={row.original.paymenttotal}/>
         </div>
       ),
     },
@@ -117,6 +123,7 @@ export function PaymentList({ payments, paymentdetails }: BookingListProps) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [filterBy, setFilterBy] = React.useState('customername');
 
   const table = useReactTable({
     data: payments,
@@ -137,7 +144,9 @@ export function PaymentList({ payments, paymentdetails }: BookingListProps) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      columnVisibility:{
+        paymentid: false,
+      },
       rowSelection,
     },
   });
@@ -150,25 +159,64 @@ export function PaymentList({ payments, paymentdetails }: BookingListProps) {
           <CardDescription>Manage all customer payment</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center py-4">
-            <div className="grow">
-              <Input
-                placeholder="Filter customers..."
-                value={(table.getColumn("customername")?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                  table.getColumn("customername")?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm"
+        <div className="flex items-center py-4">
+            <div className="w-96 pr-5">
+            <Input
+              placeholder="Filter customers..."
+              value={(table.getColumn(filterBy) ? table.getColumn(filterBy)?.getFilterValue() as string : '') ?? ""}
+              onChange={(event) =>
+                table.getColumn(filterBy) && table.getColumn(filterBy)?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
               />
             </div>
-          </div>
+            <div className="pr-5">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-auto">
+                    Filter by column <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuRadioGroup value={filterBy} onValueChange={setFilterBy}>
+                    <DropdownMenuRadioItem value="bookingid">Booking ID</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="customername">Customer</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="contact">Contact</DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="grow">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-auto">
+                    Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {table.getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            </div>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} style={{width: `${header.getSize()}px` }}>
                         {header.isPlaceholder
                           ? null
                           : flexRender(header.column.columnDef.header, header.getContext())}

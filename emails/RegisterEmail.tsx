@@ -27,25 +27,27 @@ export const LoginPasswordEmail = ({
 }: LoginPasswordProps) => (
   <Html>
     <Head />
-    <Preview>Your login code for Linear</Preview>
+    <Preview>You have been registered</Preview>
     <Body style={main}>
       <Container style={container}>
         <Img
-          src={`${baseUrl}/static/PWMS.png`}
-          width="100"
-          height="100"
+          src='https://pwms.xyz/_next/image?url=%2FPWMS.png&w=96&q=75'
+          width="70"
+          height="70"
           
         />
-        <Heading style={heading}>You've Been Registered</Heading>
+        <Heading style={heading}>You have Been Registered</Heading>
+        <Section style={codeContainer}>
+        <Text style={code}>{password}</Text>
+        </Section>
         <Section style={buttonContainer}>
           <Button style={button} href="https://pwms.xyz/sign-in">
             Login to PWMS
           </Button>
         </Section>
         <Text style={paragraph}>
-          You can start look at your task, by clicking the button and use the password below to login
+          You can start look at your task, by clicking the button and use the password above to login
         </Text>
-        <code style={code}>{password}</code>
         <Hr style={hr} />
         <Link href="https://pwms.xyz/sign-in" style={reportLink}>
           PWMS
@@ -97,7 +99,7 @@ const buttonContainer = {
 };
 
 const button = {
-  backgroundColor: "#5e6ad2",
+  backgroundColor: "#1f1d1d",
   borderRadius: "3px",
   fontWeight: "600",
   color: "#fff",
@@ -119,12 +121,24 @@ const hr = {
 };
 
 const code = {
-  fontFamily: "monospace",
-  fontWeight: "700",
-  padding: "1px 4px",
-  backgroundColor: "#dfe1e4",
-  letterSpacing: "-0.3px",
-  fontSize: "21px",
+  color: "#000",
+  display: "inline-block",
+  fontFamily: "HelveticaNeue-Bold",
+  fontSize: "32px",
+  fontWeight: 700,
+  letterSpacing: "6px",
+  lineHeight: "40px",
+  paddingBottom: "8px",
+  paddingTop: "8px",
+  margin: "0 auto",
+  width: "100%",
+  textAlign: "center" as const,
+};
+
+const codeContainer = {
+  background: "rgba(0,0,0,.05)",
   borderRadius: "4px",
-  color: "#3c4149",
+  margin: "35px auto 10px",
+  verticalAlign: "middle",
+  width: "280px",
 };

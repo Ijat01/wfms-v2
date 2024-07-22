@@ -20,18 +20,44 @@ export async function DELETE(req: Request) {
       return new Response('You must be signed in to delete a user', { status: 401 });
     }
 
-    
-
-    console.log('Session ID:', session.user.id);
 
     // Delete the user record from the database
     const newtask_id = +task_id;
+
+    const task = await db.tasks.findUnique({
+      where: { task_id : newtask_id }  ,
+    });
+
+    if (!task || !task.event_id) {
+      throw new Error('Event not found or event date is missing');
+    }
+
+    const event = await db.events.findUnique({
+      where: { event_id : task?.event_id }  ,
+    });
 
     const deletedEvent = await db.tasks.delete({
       where: { task_id : newtask_id }  ,
     });
 
-    console.log('Task successfully deleted:', deletedEvent);
+    const counttask = await db.tasks.count({
+      where:{
+        event_id: task.event_id,
+      }
+    })
+    
+    if (counttask === 0){
+      const updateevent = await db.events.update({
+        where:{
+          event_id: event?.event_id,
+        },
+        data:{
+          event_status: "No Task Assigned"
+        }
+      })
+    }
+
+    
 
     // Return a 200 OK response indicating successful deletion
     return new Response('Task successfully deleted', { status: 200 });

@@ -1,32 +1,31 @@
-
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { PaymentList } from '@/components/Payment/PaymentListTableMarketer'
-import { getPaymentDataAll, getPaymentList } from '@/lib/data'
+import Board from '@/components/mytask/Board'
+import { getMyTaskKanban } from '@/lib/data'
 import Loading from './loading'
-
 
 
 
 const page = async () => {
 
-  const payments = await getPaymentList();
-  const paymentdetails = await getPaymentDataAll();
+  const data = await getMyTaskKanban();
 
   return (
 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
-          <Tabs defaultValue="all">
-          <div className="flex items-center">
+          <Tabs defaultValue="mytask">
+            <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="mytask">My Task</TabsTrigger>
               </TabsList>
-
+            
             </div>
-            <TabsContent value="all">
+
+            <TabsContent value="mytask">
             <Suspense fallback={<Loading/>}>
-            <PaymentList payments={payments} paymentdetails={paymentdetails}/>
+            <Board board={data} />
             </Suspense>
             </TabsContent>
+
           </Tabs>
     </main>
   )

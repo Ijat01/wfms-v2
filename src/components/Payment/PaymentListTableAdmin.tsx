@@ -31,27 +31,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "../ui/badge";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
-import { AddEvent } from "../Event/AddEvent";
-import { UpdateEventDialog } from "../Event/UpdateEvent";
-import { DeletePaymentEventDialog } from "../Event/DeleteEvent";
-import { formatDate } from "@/lib/formateDate";
 
+import { AddPaymentDetails } from "@/components/Payment/AddPaymentDetails";
+import { UpdatePaymentDialog } from "@/components/Payment/UpdatePaymentDetails";
+import { DeletePaymentDetailsDialog } from "@/components/Payment/DeletePaymentDetails";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
 
 interface BookingListProps {
-  bookings: any[];
-  events: any[];
+  payments: any[];
+  paymentdetails: any[];
 }
 
-export function EventTable({ bookings, events }: BookingListProps) {
-  
+export function PaymentList({ payments, paymentdetails }: BookingListProps) {
 
   // Define columns for the booking table
-  const columns: ColumnDef<typeof bookings[0]>[] = [
+  const columns: ColumnDef<typeof payments[0]>[] = [
     {
       accessorKey: "count",
       header: ({ column }) => (
@@ -60,45 +57,64 @@ export function EventTable({ bookings, events }: BookingListProps) {
         </div>
       ),
       cell: ({ row }) => (
-        <div className="">
+        <div className="mx-0">
           {row.index + 1}
         </div>
       ),
       size:20
     },
     {
-      accessorKey: "booking_id",
-        header: ({ column }) =>(<div className="text-center"> BOOKING ID</div>), 
-        cell: ({ row }) => <div className="text-center"> <Badge variant="outline">{row.getValue("booking_id")}</Badge> </div>,
-        size: 10,
+      accessorKey: "paymentid",
+      header: ({ column }) =>(<div className=""> ID </div>),
+      cell: ({ row }) => <div className="">{row.getValue("paymentid")}</div>,
     },
+    {
+        accessorKey: "bookingid",
+        header: ({ column }) =>(<div className="text-center"> BOOKING ID</div>), 
+        cell: ({ row }) => <div className="text-center"> <Badge variant="outline">{row.getValue("bookingid")}</Badge> </div>,
+        size:10
+      },
     {
       accessorKey: "customername",
       header: ({ column }) => (
-        <div className=" text-center pr-5">
+        <div className=" text-center pr-14">
             CUSTOMER NAME
         </div>
       ),
       cell: ({ row }) => (
-        <div className="text-center pr-5">
+        <div className="text-center pr-14">
           <Badge variant="outline">
             {row.getValue("customername")}
           </Badge>
         </div>
       ),
-      size: 130
+      size: 150
     },
     {
-      accessorKey: "packagename",
-      header:({ column }) =>(<div className="text-center"> PACKAGE </div>),
-      cell: ({ row }) => <div className="text-center">  <Badge variant="outline">{row.getValue("packagename")}</Badge> </div>,
+      accessorKey: "contact",
+      header:  ({ column }) =>(<div className="text-center pr-16">CONTACT</div>),
+      cell: ({ row }) =><div className="text-center pr-16"> <Badge variant="outline">{row.getValue("contact")}</Badge> </div>,
+      size:10
     },
+    {
+      accessorKey: "paymenttotal",
+      header:({ column }) =>(<div className=" pr-16">TOTAL</div>),
+      cell: ({ row }) => <div className="font-bold"> RM {row.getValue("paymenttotal")}</div>,
+      size:10
+    },
+    {
+        accessorKey: "paymentbalance",
+        header:"BALANCE",
+        cell: ({ row }) =><div className="font-bold"> RM {row.getValue("paymentbalance")}</div>,
+        size:10
+      },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => (
         <div className="flex gap-4 justify-end mr-5">
-          <AddEvent bookingid={row.original.booking_id}/>
+          <AddPaymentDetails paymentid={row.original.paymentid} paymentbalance={row.original.paymentbalance}/>
+          <UpdatePaymentDialog payment_balance={row.original.paymentbalance} payment_id={row.original.paymentid} payment_total={row.original.paymenttotal}/>
         </div>
       ),
     },
@@ -111,7 +127,7 @@ export function EventTable({ bookings, events }: BookingListProps) {
   const [filterBy, setFilterBy] = React.useState('customername');
 
   const table = useReactTable({
-    data: bookings,
+    data: payments,
     columns,
     initialState: {
       pagination: {
@@ -129,7 +145,9 @@ export function EventTable({ bookings, events }: BookingListProps) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      columnVisibility:{
+        paymentid: false,
+      },
       rowSelection,
     },
   });
@@ -138,11 +156,11 @@ export function EventTable({ bookings, events }: BookingListProps) {
     <div className="w-full">
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="pb-2">
-          <CardTitle>Events</CardTitle>
-          <CardDescription>Manage customer events</CardDescription>
+          <CardTitle>Payment </CardTitle>
+          <CardDescription>Manage all customer payment</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center py-4">
+        <div className="flex items-center py-4">
             <div className="w-96 pr-5">
             <Input
               placeholder="Filter customers..."
@@ -162,8 +180,9 @@ export function EventTable({ bookings, events }: BookingListProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuRadioGroup value={filterBy} onValueChange={setFilterBy}>
-                    <DropdownMenuRadioItem value="booking_id">Booking ID</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="bookingid">Booking ID</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="customername">Customer</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="contact">Contact</DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -226,26 +245,22 @@ export function EventTable({ bookings, events }: BookingListProps) {
                             <TableCell colSpan={8}>
                             <Table>
                               <TableHeader className="text-xs">
-                                <TableHead className="w-32">Event Type</TableHead>
-                                <TableHead className="w-32 ">Event Date</TableHead>
-                                <TableHead className="w-32 ">Event Time</TableHead>
-                                <TableHead className="w-32 ">Event Address</TableHead>
+                                <TableHead className="w-32">Payment</TableHead>
+                                <TableHead className="w-32 ">Payment Method </TableHead>
+                                <TableHead className="w-32 ">Amount</TableHead>
                                 <TableHead className="w-32 "> Status</TableHead>
                                 <TableHead className="w-32 "> <span className="sr-only">Actions</span> </TableHead>
                               </TableHeader>
                               <TableBody>
-                              {events.filter(t => t.bookingid == row.original.booking_id).map(events => (
-                              <TableRow key={events.event_id}>
-                                <TableCell><Badge variant="outline">{events.event_type}</Badge></TableCell>
-                                <TableCell><Badge variant="outline">{formatDate(events.event_date)}</Badge></TableCell>
-                                <TableCell><Badge variant="outline">{events.eventtime}</Badge></TableCell>
-                                <TableCell><Badge variant="outline">{events.event_address}</Badge></TableCell>
-                                <TableCell><Badge variant={events.event_status === 'No Task Assigned' ? 'destructive' : events.event_status === 'Completed' ? 'success' : 'default'}>{events.event_status}</Badge></TableCell>
-                                
+                              {paymentdetails.filter(t => t.payment_id == row.original.paymentid).map(pd => (
+                              <TableRow key={pd .paymentdetails_id}>
+                                <TableCell><Badge variant="outline">{pd .paymentdetails_desc}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{pd .paymentdetails_type}</Badge></TableCell>
+                                <TableCell><div className="font-bold">RM {pd.paymentdetails_amount}</div></TableCell>
+                                <TableCell><Badge variant={pd .paymentdetails_status === 'Pending' ? 'destructive' : pd .paymentdetails_status === 'Complete' ? 'success' : 'default'}>{pd .paymentdetails_status}</Badge></TableCell>
                                 <TableCell>
                                 <div className="flex gap-4 justify-end mr-5">
-                                  <UpdateEventDialog bookingid={row.original.booking_id} event_id={events.event_id} eventtype={events.event_type} eventdate={events.event_date} eventaddress={events.event_address} event_time={events.eventtime}/>
-                                  <DeletePaymentEventDialog event_id={events.event_id}/>
+                                  <DeletePaymentDetailsDialog paymentdetails_id={pd.paymentdetails_id}/>
                                 </div>
                                   </TableCell>
                               </TableRow>
