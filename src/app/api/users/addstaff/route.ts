@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     const { data, error } = await resend.emails.send({
       from: "no-reply <no-reply@pwms.xyz>",
       to: email,
-      subject: "Form Submission",
+      subject: "You've Been Registered",
       react: LoginPasswordEmail({ password: password }),
     });
 
