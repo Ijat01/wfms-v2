@@ -72,7 +72,7 @@ export async function DashboardTable() {
     <Tabs defaultValue="ThisWeek">
       <div className="flex items-center">
         <TabsList>
-          <TabsTrigger value="ThisWeek">Monthly</TabsTrigger>
+          <TabsTrigger value="ThisWeek">Weekly</TabsTrigger>
           <TabsTrigger value="Inprogress">In Progress</TabsTrigger>
           <TabsTrigger value="Completed">Completed</TabsTrigger>
  
@@ -222,8 +222,8 @@ export async function DashboardTable() {
       <TabsContent value="ThisWeek">
         <Card className="" x-chunk="dashboard-05-chunk-3">
           <CardHeader className="px-7">
-            <CardTitle>Task Monthly</CardTitle>
-            <CardDescription>List of task need to be completed this month</CardDescription>
+            <CardTitle>Task Weekly</CardTitle>
+            <CardDescription>List of task need to be completed this week</CardDescription>
           </CardHeader>
           <div className="md:max-h-[390px] overflow-y-hidden hover:overflow-y-auto">
             <CardContent>

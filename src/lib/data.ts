@@ -723,4 +723,55 @@ export async function getEventSchedule() {
   }
 }
 
+export async function getEventScheduleUser() {
+  const session = await getAuthSession();
+
+  if (!session) {
+    throw new Error('You must be signed in to create a user');
+  }
+
+  try {
+    const events = await db.tasks.findMany({
+      where: {
+        user_id: session.user.id,
+      },
+      include: {
+        users: true,
+        events: {
+          include: {
+            bookings: true,
+          },
+        },
+      },
+    });
+
+    if (!events) {
+      return [];
+    }
+
+    return events
+      .map(event => {
+        if (!event.events?.event_date) {
+          return null;
+        }
+
+        const eventDate = new Date(event.events.event_date);
+        
+        // Format the date using 'en-GB' // Set time to end of the day
+
+        return {
+          start: event.events?.event_date,
+          end: event.events?.event_date,
+          title: `${event.task_role} for ${event.events.event_type?.toUpperCase() ?? 'UNKNOWN EVENT TYPE'} of ${event.events.bookings?.groom_name ?? 'Unknown Groom'} & ${event.events.bookings?.bride_name ?? 'Unknown Bride'}`.toLocaleUpperCase(),
+          allDay: true,
+        };
+      })
+      .filter(event => event !== null);
+
+  } catch (error) {
+    console.error('Error fetching event schedule:', error);
+    throw new Error('Failed to fetch event schedule');
+  }
+}
+
 
