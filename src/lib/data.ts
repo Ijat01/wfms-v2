@@ -705,10 +705,10 @@ export async function getEventSchedule() {
     }
 
     const startDate = new Date(event.event_date);
-    startDate.setHours(0, 0, 0, 0); // Start time at midnight
+    startDate.setUTCHours(0, 0, 0, 0); // Start time at midnight (UTC)
 
     const endDate = new Date(event.event_date);
-    endDate.setHours(23, 59, 59, 999); // End time just before midnight
+    endDate.setUTCHours(23, 59, 59, 999); // End time just before midnight (UTC)
 
     return {
       start: startDate,
