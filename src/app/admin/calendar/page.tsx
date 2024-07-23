@@ -1,9 +1,25 @@
 import React from 'react'
+import MyCalendar from '@/components/calendar/moment'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { getEventSchedule } from '@/lib/data'
 
-const page = () => {
+const Page = async () => {
+  const events = await getEventSchedule(); // Ensure this returns an array
+
   return (
-    <div>Calendar Page</div>
+    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
+      <Tabs defaultValue="Calendar">
+        <div className="flex items-center">
+          <TabsList>
+            <TabsTrigger value="Calendar">All</TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value="Calendar">
+          <MyCalendar events ={events} />
+        </TabsContent>
+      </Tabs>
+    </main>
   )
 }
 
-export default page
+export default Page

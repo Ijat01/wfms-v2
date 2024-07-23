@@ -679,3 +679,43 @@ export async function getAllTaskUsersDueThisWeek() {
     bride_name: task.events?.bookings?.bride_name,
   }));
 }
+
+export async function getEventSchedule() {
+  const session = await getAuthSession();
+
+  if (!session) {
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const events = await db.events.findMany({
+    include: {
+      bookings: true,
+    },
+  });
+
+  // Check if events is not null or undefined
+  if (!events) {
+    return []; // Return an empty array if no events are found
+  }
+
+  // Map through events and handle cases where event_date might be null
+  return events.map(event => {
+    if (!event.event_date) {
+      return null; // Skip events without a valid date
+    }
+
+    const startDate = new Date(event.event_date);
+    startDate.setHours(0, 0, 0, 0); // Start time at midnight
+
+    const endDate = new Date(event.event_date);
+    endDate.setHours(23, 59, 59, 999); // End time just before midnight
+
+    return {
+      start: startDate,
+      end: endDate,
+      title: `${event.event_type} of ${event.bookings?.groom_name ?? 'Unknown Groom'} & ${event.bookings?.bride_name ?? 'Unknown Bride'}`.toLocaleUpperCase(),
+      allDay: true,
+    };
+  }).filter(event => event !== null); // Filter out any null values
+}
+
