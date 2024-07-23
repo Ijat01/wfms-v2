@@ -13,19 +13,6 @@ const convertToMalaysiaTime = (date: Date) => {
   return moment(date).tz('Asia/Kuala_Lumpur').toDate();
 };
 
-// Format date to 'en-GB'
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-GB', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZone: 'Asia/Kuala_Lumpur',
-  }).format(date);
-};
-
 interface MyCalendarProps {
   events: any[]
 }

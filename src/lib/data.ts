@@ -694,35 +694,28 @@ export async function getEventSchedule() {
       },
     });
 
-    // Check if events is not null or undefined
     if (!events) {
-      return []; // Return an empty array if no events are found
+      return [];
     }
 
-    // Map through events and handle cases where event_date might be null
     return events
       .map(event => {
         if (!event.event_date) {
-          return null; // Skip events without a valid date
+          return null;
         }
 
-        const startDate = new Date(event.event_date);
-        startDate.setHours(0, 0, 0, 0); // Start time at midnight
-
-        const endDate = new Date(event.event_date);
-        endDate.setHours(23, 59, 59, 999); // End time just before midnight
-
-        // Use a default value if event.event_type is null
-        const eventType = event.event_type ?? 'Unknown Event Type';
+        const eventDate = new Date(event.event_date);
         
+        // Format the date using 'en-GB' // Set time to end of the day
+
         return {
-          start: startDate.toISOString(), // Convert Date to ISO string
-          end: endDate.toISOString(),     // Convert Date to ISO string
-          title: `${eventType.toUpperCase()} of ${event.bookings?.groom_name ?? 'Unknown Groom'} & ${event.bookings?.bride_name ?? 'Unknown Bride'}`.toLocaleUpperCase(),
+          start: event.event_date,
+          end: event.event_date,
+          title: `${event.event_type?.toUpperCase() ?? 'UNKNOWN EVENT TYPE'} of ${event.bookings?.groom_name ?? 'Unknown Groom'} & ${event.bookings?.bride_name ?? 'Unknown Bride'}`.toLocaleUpperCase(),
           allDay: true,
         };
       })
-      .filter(event => event !== null); // Filter out any null values
+      .filter(event => event !== null);
 
   } catch (error) {
     console.error('Error fetching event schedule:', error);
