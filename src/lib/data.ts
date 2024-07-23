@@ -687,35 +687,47 @@ export async function getEventSchedule() {
     throw new Error('You must be signed in to create a user');
   }
 
-  const events = await db.events.findMany({
-    include: {
-      bookings: true,
-    },
-  });
+  try {
+    const events = await db.events.findMany({
+      include: {
+        bookings: true,
+      },
+    });
 
-  // Check if events is not null or undefined
-  if (!events) {
-    return []; // Return an empty array if no events are found
-  }
-
-  // Map through events and handle cases where event_date might be null
-  return events.map(event => {
-    if (!event.event_date) {
-      return null; // Skip events without a valid date
+    // Check if events is not null or undefined
+    if (!events) {
+      return []; // Return an empty array if no events are found
     }
 
-    const startDate = new Date(event.event_date);
-    startDate.setHours(0, 0, 0, 0); // Start time at midnight
+    // Map through events and handle cases where event_date might be null
+    return events
+      .map(event => {
+        if (!event.event_date) {
+          return null; // Skip events without a valid date
+        }
 
-    const endDate = new Date(event.event_date);
-    endDate.setHours(23, 59, 59, 999); // End time just before midnight
+        const startDate = new Date(event.event_date);
+        startDate.setHours(0, 0, 0, 0); // Start time at midnight
 
-    return {
-      start: startDate,
-      end: endDate,
-      title: `${event.event_type} of ${event.bookings?.groom_name ?? 'Unknown Groom'} & ${event.bookings?.bride_name ?? 'Unknown Bride'}`.toLocaleUpperCase(),
-      allDay: true,
-    };
-  }).filter(event => event !== null); // Filter out any null values
+        const endDate = new Date(event.event_date);
+        endDate.setHours(23, 59, 59, 999); // End time just before midnight
+
+        // Use a default value if event.event_type is null
+        const eventType = event.event_type ?? 'Unknown Event Type';
+        
+        return {
+          start: startDate.toISOString(), // Convert Date to ISO string
+          end: endDate.toISOString(),     // Convert Date to ISO string
+          title: `${eventType.toUpperCase()} of ${event.bookings?.groom_name ?? 'Unknown Groom'} & ${event.bookings?.bride_name ?? 'Unknown Bride'}`.toLocaleUpperCase(),
+          allDay: true,
+        };
+      })
+      .filter(event => event !== null); // Filter out any null values
+
+  } catch (error) {
+    console.error('Error fetching event schedule:', error);
+    throw new Error('Failed to fetch event schedule');
+  }
 }
+
 
