@@ -703,13 +703,22 @@ export async function getEventSchedule() {
     if (!event.event_date) {
       return null; // Skip events without a valid date
     }
-
     const eventDate = new Date(event.event_date);
-    const startDate = new Date(eventDate.toISOString()); // Convert to UTC
-    startDate.setHours(0, 0, 0, 0); // Start time at midnight GMT
 
-    const endDate = new Date(eventDate.toISOString()); // Convert to UTC
-    endDate.setHours(23, 50, 59, 999); // End time just before midnight (UTC)
+    // Set start and end to be all-day in UTC
+    const startDate = new Date(Date.UTC(
+      eventDate.getUTCFullYear(),
+      eventDate.getUTCMonth(),
+      eventDate.getUTCDate(),
+      0, 0, 0, 0
+    ));
+
+    const endDate = new Date(Date.UTC(
+      eventDate.getUTCFullYear(),
+      eventDate.getUTCMonth(),
+      eventDate.getUTCDate(),
+      23, 59, 59, 999
+    ));// End time just before midnight (UTC)
 
     return {
       start: startDate,

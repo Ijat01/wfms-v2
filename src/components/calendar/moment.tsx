@@ -1,35 +1,48 @@
-'use client'
-import React, { useCallback, useState } from 'react'
-import { Calendar, momentLocalizer, Views, View } from 'react-big-calendar'
-import moment from 'moment'
-import 'moment/locale/en-gb' // Import British English locale
-import "react-big-calendar/lib/css/react-big-calendar.css"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+import React, { useCallback, useState } from 'react';
+import { Calendar, momentLocalizer, Views, View } from 'react-big-calendar';
+import moment from 'moment';
+import 'moment-timezone';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-// Set moment to use British English locale
-moment.locale('en-gb')
+const localizer = momentLocalizer(moment);
 
-const localizer = momentLocalizer(moment)
+// Convert date to Malaysia time (GMT+0800)
+const convertToMalaysiaTime = (date: Date) => {
+  return moment(date).tz('Asia/Kuala_Lumpur').toDate();
+};
 
-// Define props interface
 interface MyCalendarProps {
-  events: any[];
+  events: Array<{
+    start: Date;
+    end: Date;
+    title: string;
+    allDay: boolean;
+  }>;
 }
 
-const MyCalendar = ({ events }: MyCalendarProps) => { 
-  const [view, setView] = useState<View>(Views.MONTH)
+const MyCalendar = ({ events }: MyCalendarProps) => {
+  const [view, setView] = useState<View>(Views.MONTH);
 
   const handleOnChangeView = (selectedView: View) => {
-    setView(selectedView)
-  }
+    setView(selectedView);
+  };
 
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date());
   const onNavigate = useCallback(
     (newDate: Date) => {
-      return setDate(newDate)
+      return setDate(newDate);
     },
     [setDate]
-  )
+  );
+
+  // Convert event times to Malaysia time
+  const malaysiaEvents = events.map(event => ({
+    ...event,
+    start: convertToMalaysiaTime(event.start),
+    end: convertToMalaysiaTime(event.end),
+  }));
 
   return (
     <Card x-chunk="dashboard-06-chunk-0">
@@ -38,14 +51,14 @@ const MyCalendar = ({ events }: MyCalendarProps) => {
         <CardDescription>View Schedule</CardDescription>
       </CardHeader>
       <CardContent>
-        <div style={{ height: "650px" }}>
+        <div style={{ height: '650px' }}>
           <Calendar
             date={date}
             onNavigate={onNavigate}
             localizer={localizer}
-            events={events} 
+            events={malaysiaEvents} 
             view={view}
-            defaultView={Views.MONTH} // Ensure this is an array
+            defaultView={Views.MONTH}
             views={['month', 'agenda']}
             showMultiDayTimes
             style={{ height: 650 }}
@@ -55,7 +68,7 @@ const MyCalendar = ({ events }: MyCalendarProps) => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default MyCalendar
+export default MyCalendar;
