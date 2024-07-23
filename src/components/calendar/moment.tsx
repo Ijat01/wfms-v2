@@ -14,12 +14,7 @@ const convertToMalaysiaTime = (date: Date) => {
 };
 
 interface MyCalendarProps {
-  events: Array<{
-    start: Date;
-    end: Date;
-    title: string;
-    allDay: boolean;
-  }>;
+  events: any[]
 }
 
 const MyCalendar = ({ events }: MyCalendarProps) => {
