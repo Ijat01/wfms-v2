@@ -42,14 +42,38 @@ import { formatDate } from "@/lib/formateDate";
 import { DeleteTaskDialog } from "../task/DeleteTask";
 
 interface BookingListProps {
-  task: any[];
-  events: any[];
+  staff: any[];
 }
 
-export function TaskListTable({  events, task }: BookingListProps) {
+export function TaskListByStaff({  staff }: BookingListProps) {
 
-  // Define columns for the booking table
-  const columns: ColumnDef<typeof events[0]>[] = [
+    const getPriorityStatus = (duedatecompare: Date | null | undefined) => {
+        const currentDate = new Date();
+        if (!duedatecompare) {
+          return "Low";
+        }
+    
+        const diffTime = duedatecompare.getTime() - currentDate.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays <= 5) return "High";
+        if (diffDays <= 10) return "Medium";
+        return "Low";
+      };
+
+    const getStatusBadge = (priorityStatus: string) => {
+        switch (priorityStatus) {
+          case "High":
+            return <Badge className="text-xs" variant="destructive">High</Badge>;
+          case "Medium":
+            return <Badge className="text-xs" variant="warning">Medium</Badge>;
+          case "Low":
+            return <Badge className="text-xs" variant="success">Low</Badge>;
+          default:
+            return null;
+        }
+      };
+
+  const columns: ColumnDef<typeof staff[0]>[] = [
     {
       accessorKey: "count",
       header: ({ column }) => (
@@ -75,7 +99,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
 
     },
     {
-      accessorKey: "bookingid",
+      accessorKey: "task_role",
       header: ({ column }) => (
         <div className="text-center">
             ID
@@ -84,86 +108,93 @@ export function TaskListTable({  events, task }: BookingListProps) {
 
     },
     {
-      accessorKey: "event_type",
+        accessorKey: "event_type",
+        header: ({ column }) => (
+          <div className="text-center">
+              ID
+          </div>
+        ),
+  
+      },
+    {
+        accessorKey: "customername",
+        header: ({ column }) => (
+          <div className="text-center">
+              ID
+          </div>
+        ),
+  
+      },
+    {
+      accessorKey: "user_name",
       header: ({ column }) => (
-        <div className="text-center pr-10">
-            EVENT TYPE
+        <div className="text-center pr-14">
+            STAFF NAME
         </div>
       ),
       cell: ({ row }) => (
-        <div className=" text-center pr-10" >
-          <Badge variant={row.original.event_type === 'Sanding' ? 'sanding' : row.original.event_type === 'Nikah' ? 'nikah' : 'outline'}>
-            {row.getValue("event_type")}
-          </Badge>
+        <div className=" flex items-center font-medium pr-14" >
+            <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <div>
+                <div className="pl-4 text-clip">{row.getValue("user_name")}</div>
+                <div className="pl-4 text-xs text-gray-500">{row.original.task_role} </div>
+            </div>
         </div>
       ),
       size:100
     },
     {
-      accessorKey: "customername",
+      accessorKey: "customernameshow",
       header: ({ column }) => (
         <div className="text-center pr-10" >
-            CUSTOMER NAME
+            EVENT NAME
         </div>
       ),
       cell: ({ row }) => (
         <div className="text-center pr-10" >
           <Badge variant="outline">
-            {row.getValue("customername")}
+            {row.original.event_type} OF {row.getValue("customername")}
           </Badge>
         </div>
       ),
       size:10
     },
     {
-      accessorKey: "event_date",
+      accessorKey: "duedate",
       header:({ column }) => (
         <div className=" text-center ">
-            EVENT DATE
+            EVENT DUE
         </div>
       ),
-      cell: ({ row }) =><div className=" text-center "> <Badge variant="outline">{row.getValue("event_date")}</Badge> </div>,
+      cell: ({ row }) =><div className=" text-center "> <Badge variant="outline">{row.getValue("duedate")}</Badge> </div>,
       size:10
     },
     {
-      accessorKey: "event_time",
+      accessorKey: "task_status",
       header:({ column }) => (
         <div className=" text-center ">
-            EVENT TIME
+            TASK STATUS
         </div>
       ),
       cell: ({ row }) => <div className=" text-center ">
         
-      <Badge variant="outline">{row.getValue("event_time")}</Badge>
+      <Badge variant={row.original.task_status === 'Pending' ? 'destructive' : row.original.task_status === 'Complete' ? 'success' : 'default'}>{row.getValue("task_status")}</Badge>
       </div>,
       size:10
     },
     {
-      accessorKey: "event_address",
-      header:({ column }) => (
-        <div className=" text-center pr-16 ">
-            LOCATION
-        </div>
-      ),
-      cell: ({ row }) => <div className="text-center pr-16 "><Badge variant="outline">{row.getValue("event_address")}</Badge></div>,
-      size:50
-    },
-    {
-      accessorKey: "event_status",
-      header:"STATUS",
-      cell: ({ row }) => <div className="text-left"><Badge variant={row.original.event_status === 'No Task Assigned' ? 'destructive' : row.original.event_status === 'Completed' ? 'success' : 'default'}>{row.getValue("event_status")}</Badge></div>,
-      size:50
-    },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({cell,row }) => (
-        <div className="flex gap-4 justify-end mr-5">
-          <AddTask event_id={row.original.event_id} event_date={row.original.event_date} bookingid={row.original.bookingid} />
-        </div>
-      ),
-    },
-    
+        accessorKey: "duedatecompare",
+        header:({ column }) => (
+          <div className=" text-center pr-16 ">
+              PRIORITY
+          </div>
+        ),
+        cell: ({ row }) => <div className="text-center pr-16 ">{getStatusBadge(getPriorityStatus(row.original.duedatecompare))}</div>,
+        size:50
+      },
   ];
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -173,7 +204,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
   const [filterBy, setFilterBy] = React.useState('customername');
 
   const table = useReactTable({
-    data: events,
+    data: staff,
     columns,
     initialState: {
       pagination: {
@@ -192,8 +223,10 @@ export function TaskListTable({  events, task }: BookingListProps) {
       sorting,
       columnFilters,
       columnVisibility:{
+        task_role: false,
         event_id: false,
-        bookingid: false,
+        event_type: false,
+        customername:false
       },
       rowSelection,
     },
@@ -227,11 +260,13 @@ export function TaskListTable({  events, task }: BookingListProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuRadioGroup value={filterBy} onValueChange={setFilterBy}>
+                    <DropdownMenuRadioItem value="user_name">Staff</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="customername">Customer</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="event_type">Event Type</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="bookingid">Booking ID</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="event_title">Customer</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="event_date">Event Date</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="event_status">Status</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="task_role">Role</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="duedate">Due Date</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="task_status">Task Status</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="priority">Priority</DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -278,9 +313,6 @@ export function TaskListTable({  events, task }: BookingListProps) {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <Collapsible key={row.id} asChild>
-                      <>
-                        <CollapsibleTrigger asChild>
                           <TableRow data-state={row.getIsSelected() && "selected"}>
                             {row.getVisibleCells().map((cell) => (
                               <TableCell key={cell.id}>
@@ -288,54 +320,6 @@ export function TaskListTable({  events, task }: BookingListProps) {
                               </TableCell>
                             ))}
                           </TableRow>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent asChild>
-                          <TableRow className="bg-gray-100">
-                            <TableCell colSpan={8}>
-                            <Table>
-                                <TableHeader >
-                                    <TableRow className="text-xs">
-                                        <TableHead className="w-[500px]">Assigned Staff</TableHead>
-                                        <TableHead className="w-[250px]">Task Role</TableHead>
-                                        <TableHead className="w-[250px]">Task Status</TableHead>
-                                        <TableHead>Task Due</TableHead>
-                                        <TableHead className="w-32 ">
-                                        <span className="sr-only">Actions</span>
-                                        </TableHead>
-                                        
-                                    </TableRow>
-                                </TableHeader> 
-                              <TableBody>
-                              {task.filter(t => t.event_id == row.original.event_id).map(tasks => (
-                              <TableRow key={tasks.task_id}>
-                                <TableCell className=" flex items-center font-medium">
-                                <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="pl-4 text-clip">{tasks.user_name}</div>
-                                    <div className="pl-4 text-xs text-gray-500"> {tasks.user_role} </div>
-                                </div>
-                                </TableCell>
-                                <TableCell><Badge variant="outline">{tasks.task_role}</Badge></TableCell>
-                                <TableCell><Badge variant={tasks.task_status === 'Pending' ? 'destructive' : tasks.task_status === 'Completed' ? 'success' : 'default'}>{tasks.task_status}</Badge></TableCell>
-                                <TableCell><Badge variant="outline">{tasks.task_due}</Badge></TableCell>
-                                  <TableCell>
-                                  <div className="flex gap-4 justify-end ">
-                                    <UpdateTask task_id={tasks.task_id} event_id={row.original.event_id} task_role={tasks.task_role} user_id={tasks.user_id} bookingid={row.original.bookingid} task_due={tasks.due_date}/>
-                                    <DeleteTaskDialog task_id={tasks.task_id}/>
-                                  </div>
-                                  </TableCell>
-                              </TableRow>
-                              ))}
-                              </TableBody>
-                            </Table>
-                            </TableCell>
-                          </TableRow>
-                        </CollapsibleContent>
-                      </>
-                    </Collapsible>
                   ))
                 ) : (
                   <TableRow>

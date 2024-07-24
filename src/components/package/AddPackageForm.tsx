@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EventSchemaType,EventSchema } from "@/lib/validators/events";
+import { PackageSchemaType,PackageSchema } from "@/lib/validators/package";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -31,20 +31,7 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 
-
-interface AddEventProps{
-    bookingid: string
-  }
-
-const AddEventSchema = EventSchema.pick({
-  bookingid:true,
-  event_type:true,
-  event_date:true,
-  event_address:true,
-  event_time:true,
-  });
-
-export function AddEvent( { bookingid }: AddEventProps) {
+export function AddPackage() {
   const router = useRouter();
   const {
     register,
@@ -52,16 +39,12 @@ export function AddEvent( { bookingid }: AddEventProps) {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<EventSchemaType>({
-    resolver: zodResolver(AddEventSchema),
+  } = useForm<PackageSchemaType>({
+    resolver: zodResolver(PackageSchema),
   });
 
-  useEffect(() => {
-      setValue("bookingid", bookingid);
-  }, [bookingid,  setValue]);
-
   const mutation = useMutation({
-    mutationFn: async (formData: EventSchemaType) => {
+    mutationFn: async (formData: PackageSchemaType) => {
       const { data } = await axios.post("/api/event/AddEvent/", formData);
       return data;
     },
@@ -89,7 +72,7 @@ export function AddEvent( { bookingid }: AddEventProps) {
     },
   });
 
-  const onSubmit = (data: EventSchemaType) => {
+  const onSubmit = (data: PackageSchemaType) => {
     mutation.mutate(data);
   };
 
@@ -109,47 +92,33 @@ export function AddEvent( { bookingid }: AddEventProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="hidden">
-            <Label htmlFor="bookingid">Booking ID</Label>
-            <Input id="bookingid" {...register("bookingid")} />
-            {errors.bookingid && <p>{errors.bookingid.message}</p>}
-          </div>
-          
           <div className="pt-4">
-            <Label htmlFor="event_type">Event Type</Label>
+            <Label htmlFor="package_id">Package ID</Label>
+            <Input id="package_id" type="package_id" {...register("package_id")} />
+            {errors.package_id && <p>{errors.package_id.message}</p>}
+          </div>
+          <div className="pt-4">
+            <Label htmlFor="package_name">Package Name</Label>
+            <Input id="package_name" {...register("package_name")} />
+            {errors.package_name && <p className="text-red-400 text-sm">{errors.package_name.message}</p>}
+          </div>
+          <div className="pt-4">
+            <Label htmlFor="package_type">Package Type</Label>
             <Select
-             {...register("event_type")} onValueChange={(value)=>setValue("event_type",value)}>
-              <SelectTrigger id="event_type" className="w-[180px]">
-                <SelectValue placeholder="Select a event" />
+             {...register("package_type")} onValueChange={(value)=>setValue("package_type",value)}>
+              <SelectTrigger id="event_type" className="">
+                <SelectValue placeholder="Select a package type" />
               </SelectTrigger>
               <SelectContent>
-                  <SelectItem value="Nikah">Nikah</SelectItem>
-                  <SelectItem value="Sanding">Sanding</SelectItem>
-                  <SelectItem value="Tunang">Tunang</SelectItem>
-                  <SelectItem value="Tandang">Tandang</SelectItem>
+                  <SelectItem value="Photo">Photo</SelectItem>
+                  <SelectItem value="Video">Video</SelectItem>
+                  <SelectItem value="Photo & Video">Photo & Video</SelectItem>
               </SelectContent>
             </Select>
-            {errors.event_type && (
-              <p className="text-red-400 text-sm">{errors.event_type.message}</p>
+            {errors.package_type && (
+              <p className="text-red-400 text-sm">{errors.package_type.message}</p>
             )}
           </div>
-          <div className="pt-4">
-            <Label htmlFor="event_time">Event Time</Label>
-            <Input id="event_time" type="time" {...register("event_time")} />
-            {errors.event_time && <p>{errors.event_time.message}</p>}
-          </div>
-          <div className="pt-4">
-            <Label htmlFor="event_date">Event Date</Label>
-            <Input id="event_date" type="date" {...register("event_date")} />
-            {errors.event_date && <p className="text-red-400 text-sm">{errors.event_date.message}</p>}
-          </div>
-          <div className="pt-4">
-            <Label htmlFor="event_address">Event Address</Label>
-            <Input id="event_address" {...register("event_address")} />
-            {errors.event_address && <p className="text-red-400 text-sm">{errors.event_address.message}</p>}
-          </div>
-          
-          
           <DialogFooter className="pt-4">
             <Button type="submit" >
               Submit

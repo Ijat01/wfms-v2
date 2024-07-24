@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { getMytask, getBookingList, getBookingTaskDataAll } from '@/lib/data'
+import { getBookingList, getBookingTaskDataAll } from '@/lib/data'
 
 import Loading from './loading'
 import { EventTable } from '@/components/Event/EventTable'
@@ -9,7 +9,6 @@ import { EventTable } from '@/components/Event/EventTable'
 
 const page = async () => {
 
-  const data = await getMytask();
   const task = await getBookingTaskDataAll();
   const booking = await getBookingList();
 

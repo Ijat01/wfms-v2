@@ -26,8 +26,6 @@ const page = () => {
             <div className="flex items-center">
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Staff</TabsTrigger>
-                <TabsTrigger value="draft">Marketer</TabsTrigger>
                  
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
@@ -42,10 +40,6 @@ const page = () => {
               <CurrentStaffTable/>
             </Suspense>
 
-            </TabsContent>
-
-            <TabsContent value="active">
-            
             </TabsContent>
             
           </Tabs>

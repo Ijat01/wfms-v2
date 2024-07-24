@@ -26,42 +26,6 @@ export async function getBookingTaskDataAll() {
   }));
 }
 
-export async function getEventDetailsTaskAssignment(taskid: number ) {
-  const session = await getAuthSession()
-
-  if (!session){
-    throw new Error('You must be signed in to create a user');
-  }
-  
-
-  const result = await db.tasks.findMany({
-    where:{
-      task_id: taskid
-    },
-    include:{
-      users:{
-        select:{
-          user_fullname: true,
-          user_role:true
-        }
-      }
-    },
-  }
-  )
-
-  return result.map((task) => ({
-
-    taskassignment_id: task.task_id.toLocaleString(),
-    user_name: task.users?.user_fullname,
-    user_role: task.users?.user_role,
-    taskassignment_role: task.task_role,
-    taskassignment_status: task.task_status,
-    taskassignment_description:task.task_description,
-
-  }))
-  
-};
-
 export async function getBookingList() {
 
   try {
@@ -222,11 +186,13 @@ export async function getEventDetailsTask(booking_id: string ) {
       task_description: task.task_description,
       duedate: task.task_duedate?.toLocaleDateString('en-GB'),
       eventdate: task.events?.event_date,
+      duedatecompare: task.task_duedate,
       eventdate_string: task.events?.event_date?.toLocaleDateString('en-GB'),
       eventaddress: task.events?.event_address,
       event_type: task.events?.event_type?.toLocaleUpperCase(),
       groom_name: task.events?.bookings?.groom_name,
       bride_name: task.events?.bookings?.bride_name,
+      customername: `${task.events?.bookings?.groom_name} & ${task.events?.bookings?.bride_name}`.toLocaleUpperCase()
     }));
 
   
@@ -515,6 +481,7 @@ export async function getTaskList() {
     user_name: task.users?.user_fullname,
     user_role: task.users?.user_role,
     task_due: task.task_duedate?.toLocaleDateString('en-GB'),
+    due_date: task.task_duedate,
     task_role: task.task_role,
     task_status: task.task_status,
     task_description:task.task_description,
@@ -772,6 +739,157 @@ export async function getEventScheduleUser() {
     console.error('Error fetching event schedule:', error);
     throw new Error('Failed to fetch event schedule');
   }
+}
+
+export async function getAllPackage(){
+
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const packages = await db.packages.findMany();
+
+return packages.map((packages) => ({
+
+  package_id: packages.package_id,
+  package_name: packages.package_name,
+  package_type: packages.package_type,
+  package_desc: packages.package_description,
+
+}));
+
+}
+
+export async function getAllTaskInprogress(){
+
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const result = await db.tasks.findMany({
+    where:{
+      task_status:"In Progress"
+    },
+    include: {
+      users: true,
+      events: {
+        include: {
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  return result.map((task) => ({
+    task_id: task.task_id.toString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description: task.task_description,
+    duedate: task.task_duedate?.toLocaleDateString('en-GB'),
+    duedatecompare: task.task_duedate,
+    eventdate: task.events?.event_date,
+    eventdate_string: task.events?.event_date?.toLocaleDateString('en-GB'),
+    eventaddress: task.events?.event_address,
+    event_type: task.events?.event_type?.toLocaleUpperCase(),
+    groom_name: task.events?.bookings?.groom_name,
+    bride_name: task.events?.bookings?.bride_name,
+  }));
+  
+}
+
+export async function getAllTaskComplete(){
+
+  const session = await getAuthSession()
+
+  if (!session){
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const result = await db.tasks.findMany({
+    where:{
+      task_status:"Complete"
+    },
+    include: {
+      users: true,
+      events: {
+        include: {
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  return result.map((task) => ({
+    task_id: task.task_id.toString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description: task.task_description,
+    duedate: task.task_duedate?.toLocaleDateString('en-GB'),
+    duedatecompare: task.task_duedate,
+    eventdate: task.events?.event_date,
+    eventdate_string: task.events?.event_date?.toLocaleDateString('en-GB'),
+    eventaddress: task.events?.event_address,
+    event_type: task.events?.event_type?.toLocaleUpperCase(),
+    groom_name: task.events?.bookings?.groom_name,
+    bride_name: task.events?.bookings?.bride_name,
+  }));
+  
+}
+
+export async function getAllTaskDueThisWeek() {
+  const session = await getAuthSession();
+
+  if (!session) {
+    throw new Error('You must be signed in to create a user');
+  }
+
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-indexed
+  const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
+  const startOfNextMonth = new Date(currentYear, currentMonth, 1);
+
+  const result = await db.tasks.findMany({
+    where: {
+      task_duedate: {
+        gte: startOfMonth,
+        lt: startOfNextMonth,
+      },
+    },
+    include: {
+      users: true,
+      events: {
+        include: {
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  return result.map((task) => ({
+    task_id: task.task_id.toString(),
+    user_name: task.users?.user_fullname,
+    user_role: task.users?.user_role,
+    task_role: task.task_role,
+    task_status: task.task_status,
+    task_description: task.task_description,
+    duedate: task.task_duedate?.toLocaleDateString('en-GB'),
+    duedatecompare: task.task_duedate,
+    eventdate: task.events?.event_date,
+    eventdate_string: task.events?.event_date?.toLocaleDateString('en-GB'),
+    eventaddress: task.events?.event_address,
+    event_type: task.events?.event_type?.toLocaleUpperCase(),
+    groom_name: task.events?.bookings?.groom_name,
+    bride_name: task.events?.bookings?.bride_name,
+  }));
 }
 
 

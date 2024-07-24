@@ -9,6 +9,7 @@ event_date:z.string(),
 bookingid:z.string(),
 confirmation:z.boolean().optional(),
 task_id:z.string().optional(),
+task_due:z.string().optional(),
   });
 
 export type TaskSchemaType = z.infer<typeof TaskSchema>;

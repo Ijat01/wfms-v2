@@ -1,4 +1,4 @@
-   "use client";
+"use client";
 import React, { useEffect, useState } from "react";
 import { FilePenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,11 +31,12 @@ import {
 } from "@/components/ui/select";
 
 interface UpdateTaskProps {
-  event_id: string | null;
-  user_id: string | undefined;
-  task_role: string | null;
-  task_id: string | null;
-  bookingid: string | null;
+  event_id: string;
+  user_id: string;
+  task_role: string;
+  task_id: string;
+  bookingid: string;
+  task_due: string;
 }
 
 const UpdateTaskSchema = TaskSchema.pick({
@@ -43,12 +44,20 @@ const UpdateTaskSchema = TaskSchema.pick({
   task_role: true,
   event_id: true,
   task_id: true,
-  bookingid:true,
+  bookingid: true,
+  task_due: true,
 });
 
-export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }: UpdateTaskProps) {
+export function UpdateTask({
+  event_id,
+  user_id,
+  task_role,
+  task_id,
+  bookingid,
+  task_due,
+}: UpdateTaskProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -58,34 +67,27 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
     formState: { errors },
   } = useForm<TaskSchemaType>({
     resolver: zodResolver(UpdateTaskSchema),
-    defaultValues: {
-        event_id: event_id || "",
-        user_id: user_id || "",
-        task_role: task_role || "",
-        task_id: task_id || "",
-        bookingid: bookingid || "",
-      },
   });
 
-  useEffect(() => {
-    if (event_id) setValue("event_id", event_id);
-    if (user_id) setValue("user_id", user_id);
-    if (task_role) setValue("task_role", task_role);
-    if (task_id) setValue("task_id", task_id);
-    if (bookingid) setValue("bookingid", bookingid);
-  }, [event_id, user_id, task_role, task_id,bookingid, setValue]);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   useEffect(() => {
-    if (open) {
-      reset({
-        event_id: event_id || "",
-        user_id: user_id || "",
-        task_role: task_role || "",
-        task_id: task_id || "",
-        bookingid: bookingid || "",
-      });
+    if (isOpen) {
+      setValue("event_id", event_id);
+      setValue("user_id", user_id);
+      setValue("task_role", task_role);
+      setValue("task_id", task_id);
+      setValue("bookingid", bookingid);
+      const formattedDate = formatDate(task_due); // Debug log
+      setValue("task_due", formattedDate);
     }
-  }, [open, event_id, user_id, task_role, task_id,bookingid, reset]);
+  }, [event_id, user_id, task_role, task_id, bookingid, task_due, setValue, isOpen]);
 
   const mutation = useMutation({
     mutationFn: async (formData: TaskSchemaType) => {
@@ -96,15 +98,16 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
       if (err instanceof AxiosError) {
         const errorMessage =
           err.response?.data || "Task wasn't added successfully. Please try again.";
-        const errorTitle = err.response?.status === 400
-          ? "Role Already Exist"
-          : err.response?.status === 402
-          ? "Staff Has Been Assigned"
-          : err.response?.status === 401
-          ? "Authentication Error"
-          : err.response?.status === 404
-          ? "Event Not Found"
-          : "Something went wrong.";
+        const errorTitle =
+          err.response?.status === 400
+            ? "Role Already Exist"
+            : err.response?.status === 402
+            ? "Staff Has Been Assigned"
+            : err.response?.status === 401
+            ? "Authentication Error"
+            : err.response?.status === 404
+            ? "Event Not Found"
+            : "Something went wrong.";
 
         toast({
           title: errorTitle,
@@ -126,7 +129,7 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
         description: "Task added successfully.",
         variant: "success",
       });
-      setOpen(false);
+      setIsOpen(false);
       router.refresh();
     },
   });
@@ -148,10 +151,10 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="bg-blue-500 size-xs">
-        <FilePenLine />
+          <FilePenLine />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[1000px]">
@@ -162,7 +165,7 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="hidden">
             <Label htmlFor="event_id">Event ID</Label>
-            <Input id="event_id"  {...register("event_id")} />
+            <Input id="event_id" {...register("event_id")} />
             {errors.event_id && <p>{errors.event_id.message}</p>}
           </div>
           <div className="hidden">
@@ -200,6 +203,11 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
             )}
             {errors.user_id && <p>{errors.user_id.message}</p>}
           </div>
+          <div className="pt-4">
+            <Label htmlFor="task_due">Task Due</Label>
+            <Input type="date" id="task_due" {...register("task_due")} />
+            {errors.task_due && <p>{errors.task_due.message}</p>}
+          </div>
           <div className="hidden">
             <Label htmlFor="task_role">Task Role</Label>
             <Select
@@ -218,7 +226,9 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
                 <SelectItem value="Photo Editor">Photo Editor</SelectItem>
               </SelectContent>
             </Select>
-            {errors.task_role && <p className="text-red-400 text-sm">{errors.task_role.message}</p>}
+            {errors.task_role && (
+              <p className="text-red-400 text-sm">{errors.task_role.message}</p>
+            )}
           </div>
           <DialogFooter className="pt-4">
             <Button type="submit">Submit</Button>
@@ -228,4 +238,3 @@ export function UpdateTask({ event_id, user_id, task_role, task_id, bookingid }:
     </Dialog>
   );
 }
-

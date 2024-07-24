@@ -35,135 +35,68 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { AddTask } from "../task/AddTask";
-import { UpdateTask } from "../task/UpdateTask";
+import Link from "next/link";
+import { AddPackage } from "./AddPackageForm";
 import { formatDate } from "@/lib/formateDate";
-import { DeleteTaskDialog } from "../task/DeleteTask";
 
-interface BookingListProps {
-  task: any[];
-  events: any[];
+
+interface PackageListProps {
+  packagelist: any[];
 }
 
-export function TaskListTable({  events, task }: BookingListProps) {
+export function PackageTable({ packagelist }: PackageListProps) {
+  
 
   // Define columns for the booking table
-  const columns: ColumnDef<typeof events[0]>[] = [
+  const columns: ColumnDef<typeof packagelist [0]>[] = [
     {
       accessorKey: "count",
       header: ({ column }) => (
-        <div className="">
+        <div className="pr-5">
           #
         </div>
       ),
       cell: ({ row }) => (
-        <div className="">
+        <div className="pr-5">
           {row.index + 1}
         </div>
       ),
-      size:10
     },
-   
     {
-      accessorKey: "event_id",
-      header: ({ column }) => (
-        <div className="text-center">
-            ID
-        </div>
-      ),
+      accessorKey: "package_id",
+        header: ({ column }) =>(<div className=""> PACKAGE ID</div>), 
+        cell: ({ row }) => <div className=""> <Badge variant="outline">{row.getValue("package_id")}</Badge> </div>,
+    },
+    {
+      accessorKey: "package_type",
+        header: ({ column }) =>(<div className=""> PACKAGE TYPE</div>), 
+        cell: ({ row }) => <div className=""> <Badge variant="outline">{row.getValue("package_type")}</Badge> </div>,
 
     },
     {
-      accessorKey: "bookingid",
+      accessorKey: "package_name",
       header: ({ column }) => (
-        <div className="text-center">
-            ID
-        </div>
-      ),
-
-    },
-    {
-      accessorKey: "event_type",
-      header: ({ column }) => (
-        <div className="text-center pr-10">
-            EVENT TYPE
+        <div className="">
+            PACKAGE NAME
         </div>
       ),
       cell: ({ row }) => (
-        <div className=" text-center pr-10" >
-          <Badge variant={row.original.event_type === 'Sanding' ? 'sanding' : row.original.event_type === 'Nikah' ? 'nikah' : 'outline'}>
-            {row.getValue("event_type")}
-          </Badge>
-        </div>
-      ),
-      size:100
-    },
-    {
-      accessorKey: "customername",
-      header: ({ column }) => (
-        <div className="text-center pr-10" >
-            CUSTOMER NAME
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="text-center pr-10" >
+        <div className="">
           <Badge variant="outline">
-            {row.getValue("customername")}
+            {row.getValue("package_name")}
           </Badge>
         </div>
       ),
-      size:10
-    },
-    {
-      accessorKey: "event_date",
-      header:({ column }) => (
-        <div className=" text-center ">
-            EVENT DATE
-        </div>
-      ),
-      cell: ({ row }) =><div className=" text-center "> <Badge variant="outline">{row.getValue("event_date")}</Badge> </div>,
-      size:10
-    },
-    {
-      accessorKey: "event_time",
-      header:({ column }) => (
-        <div className=" text-center ">
-            EVENT TIME
-        </div>
-      ),
-      cell: ({ row }) => <div className=" text-center ">
-        
-      <Badge variant="outline">{row.getValue("event_time")}</Badge>
-      </div>,
-      size:10
-    },
-    {
-      accessorKey: "event_address",
-      header:({ column }) => (
-        <div className=" text-center pr-16 ">
-            LOCATION
-        </div>
-      ),
-      cell: ({ row }) => <div className="text-center pr-16 "><Badge variant="outline">{row.getValue("event_address")}</Badge></div>,
-      size:50
-    },
-    {
-      accessorKey: "event_status",
-      header:"STATUS",
-      cell: ({ row }) => <div className="text-left"><Badge variant={row.original.event_status === 'No Task Assigned' ? 'destructive' : row.original.event_status === 'Completed' ? 'success' : 'default'}>{row.getValue("event_status")}</Badge></div>,
-      size:50
     },
     {
       id: "actions",
       enableHiding: false,
-      cell: ({cell,row }) => (
+      cell: ({ row }) => (
         <div className="flex gap-4 justify-end mr-5">
-          <AddTask event_id={row.original.event_id} event_date={row.original.event_date} bookingid={row.original.bookingid} />
+          <Button>Add Package Item</Button>
         </div>
       ),
     },
-    
   ];
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -173,11 +106,11 @@ export function TaskListTable({  events, task }: BookingListProps) {
   const [filterBy, setFilterBy] = React.useState('customername');
 
   const table = useReactTable({
-    data: events,
+    data: packagelist,
     columns,
     initialState: {
       pagination: {
-        pageSize: 8, // Number of items per page
+        pageSize: 10, // Number of items per page
       },
     },
     onSortingChange: setSorting,
@@ -191,10 +124,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility:{
-        event_id: false,
-        bookingid: false,
-      },
+      columnVisibility,
       rowSelection,
     },
   });
@@ -203,11 +133,11 @@ export function TaskListTable({  events, task }: BookingListProps) {
     <div className="w-full">
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="pb-2">
-          <CardTitle>Task</CardTitle>
-          <CardDescription>Manage staff task</CardDescription>
+          <CardTitle>Events</CardTitle>
+          <CardDescription>Manage customer events</CardDescription>
         </CardHeader>
         <CardContent>
-        <div className="flex items-center py-4">
+          <div className="flex items-center py-4">
             <div className="w-96 pr-5">
             <Input
               placeholder="Filter customers..."
@@ -227,11 +157,8 @@ export function TaskListTable({  events, task }: BookingListProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuRadioGroup value={filterBy} onValueChange={setFilterBy}>
-                    <DropdownMenuRadioItem value="event_type">Event Type</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="bookingid">Booking ID</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="event_title">Customer</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="event_date">Event Date</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="event_status">Status</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="booking_id">Booking ID</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="customername">Customer</DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -259,6 +186,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <AddPackage/>
             </div>
           <div className="rounded-md border">
             <Table>
@@ -266,7 +194,7 @@ export function TaskListTable({  events, task }: BookingListProps) {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} style={{width: `${header.getSize()}px` }} >
+                      <TableHead key={header.id} >
                         {header.isPlaceholder
                           ? null
                           : flexRender(header.column.columnDef.header, header.getContext())}
@@ -293,42 +221,24 @@ export function TaskListTable({  events, task }: BookingListProps) {
                           <TableRow className="bg-gray-100">
                             <TableCell colSpan={8}>
                             <Table>
-                                <TableHeader >
-                                    <TableRow className="text-xs">
-                                        <TableHead className="w-[500px]">Assigned Staff</TableHead>
-                                        <TableHead className="w-[250px]">Task Role</TableHead>
-                                        <TableHead className="w-[250px]">Task Status</TableHead>
-                                        <TableHead>Task Due</TableHead>
-                                        <TableHead className="w-32 ">
-                                        <span className="sr-only">Actions</span>
-                                        </TableHead>
-                                        
-                                    </TableRow>
-                                </TableHeader> 
+                              <TableHeader className="text-xs">
+                                <TableHead className="w-32">Event Type</TableHead>
+                                <TableHead className="w-32 ">Event Date</TableHead>
+                                <TableHead className="w-32 ">Event Time</TableHead>
+                                <TableHead className="w-32 ">Event Address</TableHead>
+                                <TableHead className="w-32 "> Status</TableHead>
+                              </TableHeader>
                               <TableBody>
-                              {task.filter(t => t.event_id == row.original.event_id).map(tasks => (
-                              <TableRow key={tasks.task_id}>
-                                <TableCell className=" flex items-center font-medium">
-                                <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="pl-4 text-clip">{tasks.user_name}</div>
-                                    <div className="pl-4 text-xs text-gray-500"> {tasks.user_role} </div>
-                                </div>
-                                </TableCell>
-                                <TableCell><Badge variant="outline">{tasks.task_role}</Badge></TableCell>
-                                <TableCell><Badge variant={tasks.task_status === 'Pending' ? 'destructive' : tasks.task_status === 'Completed' ? 'success' : 'default'}>{tasks.task_status}</Badge></TableCell>
-                                <TableCell><Badge variant="outline">{tasks.task_due}</Badge></TableCell>
-                                  <TableCell>
-                                  <div className="flex gap-4 justify-end ">
-                                    <UpdateTask task_id={tasks.task_id} event_id={row.original.event_id} task_role={tasks.task_role} user_id={tasks.user_id} bookingid={row.original.bookingid} task_due={tasks.due_date}/>
-                                    <DeleteTaskDialog task_id={tasks.task_id}/>
-                                  </div>
-                                  </TableCell>
+                              
+                              <TableRow >
+                                <TableCell><Badge variant="outline"></Badge></TableCell>
+                                <TableCell><Badge variant="outline"></Badge></TableCell>
+                                <TableCell><Badge variant="outline"></Badge></TableCell>
+                                <TableCell><Badge variant="outline"></Badge></TableCell>
+                                <TableCell><Badge></Badge></TableCell>
+                              
                               </TableRow>
-                              ))}
+                          
                               </TableBody>
                             </Table>
                             </TableCell>

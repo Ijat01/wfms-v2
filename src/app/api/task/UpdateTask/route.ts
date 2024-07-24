@@ -11,6 +11,7 @@ const UpdateTaskSchema = z.object({
     event_id: z.string(),
     task_id: z.string(),
     bookingid: z.string(),
+    task_due: z.string()
 });
 
 export async function PATCH(req: Request) {
@@ -22,6 +23,7 @@ export async function PATCH(req: Request) {
             event_id,
             task_id,
             bookingid,
+            task_due,
         } = UpdateTaskSchema.parse(body);
         const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -139,19 +141,21 @@ export async function PATCH(req: Request) {
             throw new Error('Task not found');
         }
 
-        // Update task details
+        const newduedate = new Date(task_due).toISOString();
+
         const updatedTask = await db.tasks.update({
             where: {
                 task_id: newTaskId,
             },
             data: {
                 user_id: user_id,
+                task_duedate: newduedate
             },
         });
 
         console.log('Task successfully updated:', updatedTask);
 
-        const { data, error } = await resend.emails.send({
+        /*const { data, error } = await resend.emails.send({
             from: "no-reply <no-reply@pwms.xyz>",
             to: staffemail,
             subject: "Task Assigned",
@@ -163,7 +167,7 @@ export async function PATCH(req: Request) {
               eventtype:event.event_type,
               eventdate: event.event_date.toLocaleDateString(),
               eventtime:event.event_time, }),
-          });
+          });*/
 
         // Return a 200 OK response with the updated task
         return new Response('OK');

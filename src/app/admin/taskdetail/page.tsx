@@ -1,26 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
-import React from 'react'
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
 
-import { CaretSortIcon } from "@radix-ui/react-icons"
-import { getEventDetailsBooking, getEventDetailsTask, getEventDetailsTaskAssignment } from "@/lib/data";
-import { any } from "zod";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AddTask } from "@/components/task/AddTask";
+import React from 'react'
+import { getEventDetailsBooking, getEventDetailsTask } from "@/lib/data";
 import { TaskCard } from "@/components/taskdetail/taskdetails";
 
 const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {

@@ -17,7 +17,7 @@ import {
   } from "@/components/ui/accordion"
 
 import { CaretSortIcon } from "@radix-ui/react-icons"
-import { getEventDetailsBooking, getEventDetailsTask, getEventDetailsTaskAssignment } from "@/lib/data";
+
 import { any } from "zod";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

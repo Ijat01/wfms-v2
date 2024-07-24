@@ -130,6 +130,54 @@ export async function POST(req: Request) {
       }
 
       if (otherEvent) {
+
+        const sameuser = await db.tasks.findMany({
+          where:{
+            event_id: otherEvent.event_id,
+            user_id: user_id
+          }
+        })
+
+        if (sameuser.length === 1){
+
+          const newfirstTask = await db.tasks.create({
+            data: {
+              user_id: user_id,
+              event_id: newEventId,
+              task_role: task_role,
+              task_description: "assigned",
+              task_status: "In Progress",
+              task_duedate: taskDueDate.toISOString(), // Ensure ISO-8601 format
+            },
+          });
+
+          const updateEvent = await db.events.update({
+            where:{
+                event_id:newEventId,
+            },
+            data:{
+                event_status:"Task Assigned"
+            }
+
+            
+        })
+
+        const { data, error } = await resend.emails.send({
+          from: "no-reply <no-reply@pwms.xyz>",
+          to: staffemail,
+          subject: "Task Assigned",
+          react: SingleTaskEmail({  
+            name: staffdetails?.user_fullname,
+            taskrole: task_role,
+            groomname:booking?.groom_name,
+            bridename:booking?.bride_name,
+            eventtype:event.event_type,
+            eventdate: event.event_date.toLocaleDateString(),
+            eventtime:event.event_time, }),
+        });
+
+        }else{
+
         const newsecondTask = await db.tasks.create({
           data: {
             user_id: user_id,
@@ -186,6 +234,7 @@ export async function POST(req: Request) {
           seceventtime:otherEvent.event_time, }),
       });
 
+      }
       }else{
 
         const newfirstTask = await db.tasks.create({

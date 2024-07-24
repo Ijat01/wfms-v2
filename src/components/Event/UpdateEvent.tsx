@@ -60,7 +60,13 @@ export function UpdateEventDialog({
     resolver: zodResolver(EventSchema),
   });
   
-
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   
 
   useEffect(() => {
@@ -75,13 +81,7 @@ export function UpdateEventDialog({
     }
   }, [isOpen, bookingid, event_id, eventtype, eventdate, eventaddress,event_time, setValue]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+
 
   const mutation = useMutation({
     mutationFn: async (formData: EventSchemaType) => {

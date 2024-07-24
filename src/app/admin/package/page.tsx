@@ -1,16 +1,14 @@
 import React, { Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { getBookingList, getBookingTaskDataAll } from '@/lib/data'
+import { getAllPackage } from '@/lib/data'
 
-import Loading from './loading'
-import { EventTable } from '@/components/Event/EventTable'
+import { PackageTable } from '@/components/package/PackageTable'
 
 
 
 const page = async () => {
 
-  const task = await getBookingTaskDataAll();
-  const booking = await getBookingList();
+    const packagelist = await getAllPackage()
 
   return (
 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
@@ -23,9 +21,7 @@ const page = async () => {
             </div>
 
             <TabsContent value="all">
-            <Suspense fallback={<Loading/>}>
-              <EventTable bookings={booking} events={task}/>
-            </Suspense>
+            <PackageTable packagelist={packagelist}/>
             </TabsContent>
 
           </Tabs>
