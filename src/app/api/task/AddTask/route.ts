@@ -172,7 +172,7 @@ export async function POST(req: Request) {
             groomname:booking?.groom_name,
             bridename:booking?.bride_name,
             eventtype:event.event_type,
-            eventdate: event.event_date.toLocaleDateString(),
+            eventdate: event.event_date.toLocaleDateString('en-GB'),
             eventtime:event.event_time, }),
         });
 
@@ -227,10 +227,10 @@ export async function POST(req: Request) {
           groomname:booking?.groom_name,
           bridename:booking?.bride_name,
           eventtype:event.event_type,
-          eventdate: event.event_date.toLocaleDateString(),
+          eventdate: event.event_date.toLocaleDateString('en-GB'),
           eventtime:event.event_time,
           seceventtype:otherEvent.event_type,
-          seceventdate:otherEvent.event_date?.toLocaleDateString(),
+          seceventdate:otherEvent.event_date?.toLocaleDateString('en-GB'),
           seceventtime:otherEvent.event_time, }),
       });
 
@@ -267,7 +267,7 @@ export async function POST(req: Request) {
           groomname:booking?.groom_name,
           bridename:booking?.bride_name,
           eventtype:event.event_type,
-          eventdate: event.event_date.toLocaleDateString(),
+          eventdate: event.event_date.toLocaleDateString('en-GB'),
           eventtime:event.event_time, }),
       });
 

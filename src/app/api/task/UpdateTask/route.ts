@@ -155,7 +155,7 @@ export async function PATCH(req: Request) {
 
         console.log('Task successfully updated:', updatedTask);
 
-        /*const { data, error } = await resend.emails.send({
+        const { data, error } = await resend.emails.send({
             from: "no-reply <no-reply@pwms.xyz>",
             to: staffemail,
             subject: "Task Assigned",
@@ -165,9 +165,9 @@ export async function PATCH(req: Request) {
               groomname:booking?.groom_name,
               bridename:booking?.bride_name,
               eventtype:event.event_type,
-              eventdate: event.event_date.toLocaleDateString(),
+              eventdate: event.event_date.toLocaleDateString('en-GB'),
               eventtime:event.event_time, }),
-          });*/
+          });
 
         // Return a 200 OK response with the updated task
         return new Response('OK');
