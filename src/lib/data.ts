@@ -105,8 +105,13 @@ export async function getEventDetailsBooking(booking_id: string ) {
     where: {
       booking_id: newbookingid,
     },
-    include:{
-      packages:true
+    include: {
+      packages: true,
+      payments: {
+        include: {
+          paymentdetails: true
+        }
+      }
     }
   });
 
@@ -115,8 +120,21 @@ export async function getEventDetailsBooking(booking_id: string ) {
     customername: `${booking.groom_name} & ${booking.bride_name}`.toLocaleUpperCase(),
     contactno: booking.contact_no,
     packagename: booking.packages?.package_name,
+    payments: booking.payments.map(payment => ({
+      paymentid: payment.payment_id,
+      paymenttotal: payment.payment_total,
+      paymentbalance: payment.payment_balance,
+      paymentdetails: payment.paymentdetails.map(detail => ({
+        detailid: detail.paymentdetails_id,
+        detailtype: detail.paymentdetails_type,
+        detaildesc: detail.paymentdetails_desc,
+        detailstatus: detail.paymentdetails_status,
+        detailamount: detail.paymentdetails_amount,
+      }))
+    }))
   }));
-};
+}
+
 
 export async function getEventDetailsTask(booking_id: string ) {
   const newbookingid = +booking_id;

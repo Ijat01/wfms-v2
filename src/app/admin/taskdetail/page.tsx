@@ -8,7 +8,6 @@ const Page = async ({searchParams}: { searchParams:{ bookingid:string; }} ) => {
     const data = await getEventDetailsBooking( searchParams.bookingid )
     const task = await getEventDetailsTask(searchParams.bookingid)
 
-    const taskid = task.map((task)=>(task.eventid))
 
     console.log(searchParams.bookingid)
 
