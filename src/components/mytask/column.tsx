@@ -80,15 +80,6 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
                             <div className="grow">
                               {taskassignment.task_role}
                             </div>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <MoreVertical className="size-4" />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Export</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
                           </div>
                         </CardHeader>
   
@@ -132,15 +123,6 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, droppableId }) => {
                             </div>
                           </div>
   
-                          <div className="text-xs pb-1">
-                            Comment:
-                          </div>
-  
-                          <Card className="pl-2 pt-2 pb-2 text-sm rounded-sm">
-                            <div>
-                             {taskassignment.task_description} 
-                            </div>
-                          </Card>
                         </CardContent>
   
                         <CardFooter className="flex justify-end gap-2 pt-2 pb-2">

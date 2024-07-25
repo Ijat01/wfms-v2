@@ -117,23 +117,9 @@ export async function MyTaskCard(){
                 <CardTitle className="group flex items-center gap-2 text-lg">
                     Your Task
                 </CardTitle>
-                <CardDescription>Date: November 23, 2023</CardDescription>
+                <CardDescription>List of your task</CardDescription>
                 </div>
                 <div className="ml-auto flex items-center gap-1">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="outline" className="h-8 w-8">
-                        <MoreVertical className="h-3.5 w-3.5" />
-                        <span className="sr-only">More</span>
-                    </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Export</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Trash</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
                 </div>
             </CardHeader>
         
@@ -147,15 +133,6 @@ export async function MyTaskCard(){
                             <div className="grow">
                               {taskassignment.task_role}
                             </div>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <MoreVertical className="size-4" />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Export</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
                           </div>
                         </CardHeader>
   
@@ -197,16 +174,6 @@ export async function MyTaskCard(){
                               
                             </div>
                           </div>
-  
-                          <div className="text-xs pb-1">
-                            Comment:
-                          </div>
-  
-                          <Card className="pl-2 pt-2 pb-2 text-sm rounded-sm">
-                            <div>
-                             {taskassignment.task_description} 
-                            </div>
-                          </Card>
                         </CardContent>
   
                         <CardFooter className="flex justify-end gap-2 pt-2 pb-2">
